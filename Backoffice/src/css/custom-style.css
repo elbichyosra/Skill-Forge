@@ -1,0 +1,169 @@
+:root {
+  --primary: #43DAC2 !important;
+  --primary-Sshade:#C4FCF0;
+  --sidebarbg:#8cd6c8;
+  --secondary: #74188D;
+  --secondary-dark:rgb(69 1 87);
+  --secondary-dark-shade: #500c63c5;
+  --primary-hover: rgba(140, 214, 200, 0.816);
+  --primary-shade: rgba(140, 214, 200, 0.522);
+  --primary-dark: #500c63c5;
+  --rgba-primary-1: rgba(33, 158, 138, 0.1);
+  --rgba-primary-2: rgba(33, 158, 138, 0.2);
+  --rgba-primary-3: rgba(33, 158, 138, 0.3);
+  --rgba-primary-4: rgba(33, 158, 138, 0.4);
+  --rgba-primary-5: rgba(33, 158, 138, 0.5);
+  --rgba-primary-6: rgba(33, 158, 138, 0.6);
+  --rgba-primary-7: rgba(33, 158, 138, 0.7);
+  --rgba-primary-8: rgba(33, 158, 138, 0.8);
+  --rgba-primary-9: rgba(33, 158, 138, 0.9);
+  --font-family-base: 'Poppins', sans-serif;
+  --font-family-title: 'Poppins', sans-serif;
+  --title: #000; 
+  --sidebar-bg : rgba(140, 214, 200, 0.816) !important;
+}
+
+h1{
+  font-weight: 700;
+  font-size: 50px ;
+}
+.logout-button{
+    top: 200px;
+    width: 100%;
+}
+.profile-drop{
+  margin: 0px;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 400;
+  font-size: 1.3rem !important;
+  line-height: 1.5;
+  display: block;
+}
+.profile-dropdown{
+  opacity: 1 !important;
+  min-width: 224px !important;
+  padding: 4px !important;
+  transition: opacity 241ms cubic-bezier(0.4, 0, 0.2, 1) 0ms, transform 161ms cubic-bezier(0.4, 0, 0.2, 1) 0ms !important;
+  transform-origin: 224px 0px !important;
+}
+.my-card-title{
+  font-size: 24px !important;
+  font-weight: normal;
+} 
+
+.my-label{
+  color: black;
+  margin-left: 10px;
+  display: flex;
+  font-size: 1.4rem;
+  font-weight: normal;
+  line-height: 2rem;
+}
+
+.my-form-padding{
+  padding: 0 30px 10px 30px;
+}
+
+.my-button-padding{
+  padding: 30px 13px 0px 13px;
+}
+.full-width{
+  width: 100% !important;
+}
+
+.my-save-button{
+  width: 100%; 
+  padding: 0.638rem 1.5rem !important;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+
+.my-synchro-button{
+  padding: 0.638rem 1.5rem !important;
+  font-size: 1.4rem;
+  font-weight: 500;
+}
+.my-tab-size{
+  font-size: 1.3rem;
+}
+
+.checkbox-black {
+  border-color: black;
+}
+
+.accordion-primary-header{
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  color: white !important;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.accordion-primary-body{
+  border-color: var(--primary) !important;
+}
+
+.btn-pick-role {
+  background-color: white;
+  border-color: black;
+  color: black !important;
+}
+.btn-pick-role:hover {
+  background-color: #a5a7f3;
+}
+
+.empty-avatar {
+  width: 3.125rem;
+  height: 3.125rem;
+  background: #eee;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  font-size: 1.25rem;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  align-self: start;
+}
+
+.empty-avatar-red {
+  background: #fee6ea;
+  color: #74188D;
+}
+
+.empty-avatar-green {
+  background: #e7fbe6;
+  color: #43dac1dd;
+}
+
+.empty-avatar-pimary {
+  /* background: var(--rgba-primary-1); */
+  color: var(--primary); 
+}
+
+.empty-avatar-yellow {
+  background: #ffe9d5;
+  color: #500c63c5; 
+}
+
+.empty-avatar-purple {
+  background: #efbae6;
+  color: #74188D;
+}
+
+.profile-pic-empty {
+   height: 6.688rem; 
+   width: 6.688rem; 
+   margin-right: 1rem; 
+   border-width: 3px; 
+   border: 0.5rem solid #fff;
+    border-radius: 1.25rem;
+    height: 13.688rem;
+    margin-right: 2rem;
+    width: 13.688rem;
+}
+
+.custom-toast-height {
+  min-height: 120px;
+}

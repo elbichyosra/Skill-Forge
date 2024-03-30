@@ -1,0 +1,77 @@
+const TrainingContent = require('../models/trainingContent');
+
+// Créer un nouveau trainingContent
+exports.createTrainingContent = async (req, res) => {
+    try {
+        const {  title,description,category,status,endDate,userId } = req.body;
+        const savedTrainingContent= await TrainingContent.create({
+            title,
+            description,
+            category,
+            image:req.file.path,
+            status,
+            endDate,
+            userId 
+        });
+       
+        res.status(201).json(savedTrainingContent);
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+// Récupérer tous les trainingContents
+exports.getAllTrainingContents = async (req, res) => {
+    try {
+        const trainingContents = await TrainingContent.find().populate('mediaMaterials');
+        res.status(200).json(trainingContents);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Récupérer un trainingContent par son ID
+exports.getTrainingContentById = async (req, res) => {
+    try {
+        const trainingContent = await TrainingContent.findById(req.params.id).populate('mediaMaterials');
+        if (trainingContent) {
+            res.status(200).json(trainingContent);
+        } else {
+            res.status(404).json({ message: "Training content not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// Mettre à jour un trainingContent
+exports.updateTrainingContent = async (req, res) => {
+    try {
+        const updatedTrainingContent = await TrainingContent.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        );
+        if (updatedTrainingContent) {
+            res.status(200).json(updatedTrainingContent);
+        } else {
+            res.status(404).json({ message: "Training content not found" });
+        }
+    } catch (err) {
+        res.status(400).json({ message: err.message });
+    }
+};
+
+// Supprimer un trainingContent
+exports.deleteTrainingContent = async (req, res) => {
+    try {
+        const deletedTrainingContent = await TrainingContent.findByIdAndDelete(req.params.id);
+        if (deletedTrainingContent) {
+            res.status(200).json({ message: "Training content deleted successfully" });
+        } else {
+            res.status(404).json({ message: "Training content not found" });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
