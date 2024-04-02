@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keycloak_network
+  keycloak:
+    image: quay.io/keycloak/keycloak:24.0.0
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: skillforge24@gmail.com
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: POSTGRES
+      DB_ADDR: postgres
+      DB_DATABASE: keycloak
+      DB_USER: postgres
+      DB_PASSWORD: admin
+      DB_URL_DATABASE: jdbc:postgresql://postgres:5432/keycloak
+    ports:
+      - "9000:8080"
+    depends_on:
+      - postgres
+    command:
+      - start-dev
+    volumes:
+      - keycloak-data:/opt/keycloak/data
+    networks:
+      - keycloak_network
+
+networks:
+  keycloak_network:
+    name: keycloak_network
+    driver: bridge
+
+volumes:
+  postgres_data:
+  keycloak-data:

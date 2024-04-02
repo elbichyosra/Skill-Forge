@@ -1,0 +1,11 @@
+{
+    "realm": "skillForge",
+    "realm-public-key":"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAk66PPzwojnFj+u4KmHUSvgWXExvm1NPf5QmQHBs+EpP4IZQEuxN5c9YGFSvPVffbKNHwasQj6DKq5HYQUWBKFF+0d9Dgh0yB+d8PAg/eiGKDg8kN88vEe5gGy/SzuVa/DjPlhxiYajPxpISwGjSwvvwzJBlaQt7qUr29WZZgwidUSy2VaBJQXBha8XCkS8eIXZ7wHpighmaCPKu+JrmBKAL/iSWNYurmP4GPwTXZwu+6pceO8LjTWIPTj8b9imJWg3stWhQo0twNMklNCIwstUCI5JnAs8ALdRH1NqKm/6V3QpnXOIL5lw8PKww6ov48p2bfr4S/qeBeF0+ymcTUdQIDAQAB",
+    "auth-server-url": "http://localhost:9000/",
+    "ssl-required": "external",
+    "resource": ["backoffice","frontend"],
+    "public-client": false,
+    "bearer-only": true
+
+  }
+  
