@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory  } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import { Alert } from "react-bootstrap";
 
 const AddTrainingContent = () => {
     const token = useSelector((state) => state.auth.token);
+    const history = useHistory(); 
     const userId = useSelector((state) => state.auth.userId);
     const [formProgress, setFormProgress] = useState(0);
     const [formData, setFormData] = useState({
@@ -61,19 +62,22 @@ const AddTrainingContent = () => {
                 category: '',
                 status: 'available',
                 endDate: '',
-                image: ''
+                image: null
             });
 
-            // Afficher l'alerte pendant 3 secondes
-            setTimeout(() => {
-                setAlertMessage(null);
-            }, 3000);
+           
             setFormProgress(0)
+            const trainingContentId=response.data._id;
+                 // Redirect to MediaList with training content ID as URL parameter
+                 history.push(`/${trainingContentId}/media-table`);
         } catch (error) {
             console.error('Error creating training content:', error);
             setAlertMessage({ type: 'danger', message: 'Failed to create training content!' });
 
-            // Afficher l'alerte pendant 3 secondes
+          
+        }
+        finally {
+            // Utiliser setTimeout une seule fois après chaque ajout ou suppression
             setTimeout(() => {
                 setAlertMessage(null);
             }, 3000);
@@ -136,7 +140,7 @@ const AddTrainingContent = () => {
                                 <div className="card-footer text-end">
                                     <div>
                                         <Link to="/training-table" className="btn btn-primary me-3">Cancel</Link>
-                                        <button type="submit" className="btn btn-secondary">Submit</button>
+                                        <button type="submit" to="/media-table" className="btn btn-secondary">Submit</button>
                                     </div>
                                 </div>
                             </form>

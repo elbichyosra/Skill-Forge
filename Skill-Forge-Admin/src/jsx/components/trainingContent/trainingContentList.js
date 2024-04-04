@@ -22,6 +22,7 @@ const TrainingContentList = () => {
                 } catch (error) {
                     console.error('Error fetching training contents:', error);
                 }
+                
             }
         };
         fetchTrainingContents();
@@ -38,15 +39,15 @@ const TrainingContentList = () => {
             setTrainingContents(trainingContents.filter(content => content._id !== id));
             setAlertMessage({ type: 'success', message: 'Training content supprimé avec succès!' });
 
-            // Afficher l'alerte pendant 3 secondes
-            setTimeout(() => {
-                setAlertMessage(null);
-            }, 3000);
+          
         } catch (error) {
             console.error('Error deleting training content:', error);
             setAlertMessage({ type: 'danger', message: 'Erreur lors de la suppression du contenu de formation!' });
 
-            // Afficher l'alerte d'erreur pendant 3 secondes
+            
+        }
+        finally {
+            // Utiliser setTimeout une seule fois après chaque ajout ou suppression
             setTimeout(() => {
                 setAlertMessage(null);
             }, 3000);

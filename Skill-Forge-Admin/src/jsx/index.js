@@ -58,6 +58,7 @@ import jQueryValidation from "./components/Forms/jQueryValidation/jQueryValidati
 import Error403 from "./pages/Error403";
 import TrainingContentList from "./components/trainingContent/trainingContentList";
 import AddTrainingContent from "./components/trainingContent/addTrainingContent";
+import MediaTable from"./components/mediaMaterial/mediaTable"
 import { ThemeContext } from "../context/ThemeContext";
 
 
@@ -113,6 +114,9 @@ const Markup = () => {
     //training content
     { url: 'training-table', component: TrainingContentList },
     { url: 'new-training', component: AddTrainingContent },
+
+    //media Material
+    { url: ':trainingContentId/media-table', component: MediaTable },
   ];
   let path = window.location.pathname;
   path = path.split("/");
