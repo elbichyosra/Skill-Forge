@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
 import { Badge, Alert, Modal } from "react-bootstrap";
-
+import MediaItem from './mediaItem';
 const MediaList = () => {
     const { trainingContentId } = useParams();
     const [mediaMaterials, setMediaMaterials] = useState([]);
@@ -83,27 +83,24 @@ const MediaList = () => {
         });
     };
 
-    const handleDeleteMediaMaterials = async (id) => {
+    const handleDeleteMediaMaterial = async (deletedId) => {
         try {
-            await axios.delete(`http://localhost:5000/mediaMaterial/${id}`, {
+            await axios.delete(`http://localhost:5000/mediaMaterial/${deletedId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setMediaMaterials(mediaMaterials.filter(content => content._id !== id));
+            setMediaMaterials(mediaMaterials.filter(content => content._id !== deletedId));
             setAlertMessage({ type: 'success', message: 'Media material deleted successfully!' });
-           
         } catch (error) {
             console.error('Error deleting media material:', error);
             setAlertMessage({ type: 'danger', message: 'Error deleting media material!' });
-          
         }
-     finally {
-        // Utiliser setTimeout une seule fois après chaque ajout ou suppression
-        setTimeout(() => {
-            setAlertMessage(null);
-        }, 3000);
-    }
+        finally {
+            setTimeout(() => {
+                setAlertMessage(null);
+            }, 3000);
+        }
     };
 
     return (
@@ -170,22 +167,8 @@ const MediaList = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {mediaMaterials.map((mediaMaterial) => (
-                                        <tr key={mediaMaterial._id}>
-                                            <td>{mediaMaterial.title}</td>
-                                            <td>{mediaMaterial.description}</td>
-                                            <td>{mediaMaterial.file.split('\\').pop().split('-').slice(1).join('-')}</td>
-                                            <td className="text-center">
-                                                <div className="justify-content-end">
-                                                    <Link to="#" className="btn btn-primary shadow btn-xs sharp me-1">
-                                                        <i className="fas fa-pencil-alt"></i>
-                                                    </Link>
-                                                    <button onClick={() => handleDeleteMediaMaterials(mediaMaterial._id)} className="btn btn-danger shadow btn-xs sharp">
-                                                        <i className="fa fa-trash"></i>
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                {mediaMaterials.map((mediaMaterial) => (
+                                        <MediaItem key={mediaMaterial._id} mediaMaterial={mediaMaterial} onDelete={() => handleDeleteMediaMaterial(mediaMaterial._id)} token={token} />
                                     ))}
                                 </tbody>
                             </table>

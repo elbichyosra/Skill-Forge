@@ -4,11 +4,18 @@ const TrainingContent = require('../models/trainingContent');
 exports.createTrainingContent = async (req, res) => {
     try {
         const {  title,description,category,status,endDate,userId } = req.body;
+        let imagePath;
+        if (req.file) {
+            // If an image is uploaded, use its path
+            imagePath = req.file.path;
+        } else {
+            // If no image is uploaded, set imagePath to null or any default value you prefer
+            imagePath = null;}
         const savedTrainingContent= await TrainingContent.create({
             title,
             description,
             category,
-            image:req.file.path,
+            image:imagePath,
             status,
             endDate,
             userId 

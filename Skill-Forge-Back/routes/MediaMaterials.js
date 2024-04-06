@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mediaMaterialController = require('../controllers/MediaMaterialController');
 const { keycloak, sessionStore } = require('../config/keycloak');
-const upload = require('../middelwares/multerCloudinary');
+const upload = require('../middelwares/storageMulter');
 
 // Route pour créer un nouveau media Material
 router.post('/',upload.single('file'), mediaMaterialController.create);
@@ -14,7 +14,7 @@ router.get('/',mediaMaterialController.getAll);
 router.get('/:id',mediaMaterialController.getOne);
 
 // Route pour récupérer un media Material par son ID
-router.get('/getMediaMaterials/:trainingContentId',mediaMaterialController.getMediaMaterialsByTrainingContentId);
+router.get('/getByTraining/:trainingContentId',mediaMaterialController.getMediaMaterialsByTrainingContentId);
 
 // Route pour mettre à jour un media Material
 router.put('/:id', mediaMaterialController.update);

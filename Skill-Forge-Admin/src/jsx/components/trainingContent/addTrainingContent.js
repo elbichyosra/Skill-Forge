@@ -67,9 +67,10 @@ const AddTrainingContent = () => {
 
            
             setFormProgress(0)
-            const trainingContentId=response.data._id;
-                 // Redirect to MediaList with training content ID as URL parameter
-                 history.push(`/${trainingContentId}/media-table`);
+            setTimeout(() => {
+                const trainingContentId = response.data._id;
+                history.push(`/${trainingContentId}/media-table`);
+            }, 2000);
         } catch (error) {
             console.error('Error creating training content:', error);
             setAlertMessage({ type: 'danger', message: 'Failed to create training content!' });
@@ -80,7 +81,7 @@ const AddTrainingContent = () => {
             // Utiliser setTimeout une seule fois après chaque ajout ou suppression
             setTimeout(() => {
                 setAlertMessage(null);
-            }, 3000);
+            }, 2000);
         }
     };
 

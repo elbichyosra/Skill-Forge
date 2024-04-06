@@ -8,7 +8,7 @@ const upload = require('../middelwares/storageMulter');
 router.post('/',keycloak.protect('backoffice:admin'),upload.single('image'), trainingContentController.createTrainingContent);
 
 // Route pour récupérer tous les trainingContents
-router.get('/',keycloak.protect('backoffice:admin'),trainingContentController.getAllTrainingContents);
+router.get('/',keycloak.protect(),trainingContentController.getAllTrainingContents);
 
 // Route pour récupérer un trainingContent par son ID
 router.get('/:id',keycloak.protect(), trainingContentController.getTrainingContentById);

@@ -11,7 +11,7 @@ exports.create = async (req, res) => {
         const newMediaMaterial = await MediaMaterials.create({
             title,
             description,
-            file: req.file.path, // chemin du fichier sur Cloudinary
+            file: req.file.path, 
             trainingContent
         });
 
