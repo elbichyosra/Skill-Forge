@@ -14,7 +14,7 @@ router.get('/',keycloak.protect(),trainingContentController.getAllTrainingConten
 router.get('/:id',keycloak.protect(), trainingContentController.getTrainingContentById);
 
 // Route pour mettre à jour un trainingContent
-router.put('/:id',keycloak.protect('backoffice:admin'), trainingContentController.updateTrainingContent);
+router.put('/:id',keycloak.protect('backoffice:admin'),upload.single('image'), trainingContentController.updateTrainingContent);
 
 // Route pour supprimer un trainingContent
 router.delete('/:id',keycloak.protect('backoffice:admin'), trainingContentController.deleteTrainingContent);

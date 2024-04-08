@@ -51,14 +51,28 @@ exports.getTrainingContentById = async (req, res) => {
     }
 };
 
-// Mettre à jour un trainingContent
+// Mettre à jour un trainingContent avec une image
 exports.updateTrainingContent = async (req, res) => {
     try {
+        let imagePath;
+        if (req.file) {
+            // If an image is uploaded, use its path
+            imagePath = req.file.path;
+        } else {
+            // If no image is uploaded, fetch the existing image path from the database
+            const existingTrainingContent = await TrainingContent.findById(req.params.id);
+            imagePath = existingTrainingContent.image;
+        }
+
         const updatedTrainingContent = await TrainingContent.findByIdAndUpdate(
             req.params.id,
-            req.body,
+            {
+               ...req.body,
+                image: imagePath
+            },
             { new: true }
         );
+
         if (updatedTrainingContent) {
             res.status(200).json(updatedTrainingContent);
         } else {

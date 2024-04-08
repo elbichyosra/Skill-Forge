@@ -64,15 +64,33 @@ exports.getMediaMaterialsByTrainingContentId = async (req, res) => {
 // Mettre à jour un mediaMaterial
 exports.update = async (req, res) => {
   try {
-    const mediaMaterial = await MediaMaterials.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!mediaMaterial) {
-      return res.status(404).json({ error: 'Media Material non trouvé' });
+    let imagePath;
+    if (req.file) {
+        // If an file is uploaded, use its path
+        filePath = req.file.path;
+    } else {
+        // If no file is uploaded, fetch the existing file path from the database
+        const existingMediaMaterial = await MediaMaterials.findById(req.params.id);
+        filePath = existingMediaMaterial.file;
     }
-    res.status(200).json(mediaMaterial);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Erreur lors de la mise à jour du mediaMaterial' });
-  }
+
+    const updatedMediaMaterial = await MediaMaterials.findByIdAndUpdate(
+        req.params.id,
+        {
+           ...req.body,
+           file: filePath
+        },
+        { new: true }
+    );
+
+    if (updatedMediaMaterial) {
+        res.status(200).json(updatedMediaMaterial);
+    } else {
+        res.status(404).json({ message: "Media material not found" });
+    }
+} catch (err) {
+    res.status(400).json({ message: err.message });
+}
 };
 
 // Supprimer un mediaMaterial
