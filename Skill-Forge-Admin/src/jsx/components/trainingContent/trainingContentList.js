@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import { useDispatch, useSelector } from "react-redux";
+import {  useSelector } from "react-redux";
 import { Badge, Alert } from "react-bootstrap";
 
 const TrainingContentList = () => {
@@ -97,7 +97,8 @@ const TrainingContentList = () => {
                                         <td>{trainingContent.title}</td>
                                         <td>{trainingContent.category}</td>
                                         <td>{formatDate(trainingContent.endDate)}</td>
-                                        <td>{trainingContent.description}</td>
+                                        <td>{trainingContent.description.split(' ').slice(0, 7).join(' ')}{trainingContent.description.split(' ').length > 7 ? '...' : ''}</td>
+
                                         <td>
                                             {trainingContent.status === 'available' ? (
                                                 <Badge variant="success light">Available</Badge>
@@ -107,7 +108,7 @@ const TrainingContentList = () => {
                                         </td>
                                         <td className="text-center">
                                             <div className="action-buttons justify-content-end">
-                                                <Link to={"#"} className="btn btn-success light mr-2">
+                                                <Link to={`/${trainingContent._id}/details-training`} className="btn btn-success light mr-2">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="svg-main-icon" width="24px" height="24px" viewBox="0 0 32 32" x="0px" y="0px"><g data-name="Layer 21"><path d="M29,14.47A15,15,0,0,0,3,14.47a3.07,3.07,0,0,0,0,3.06,15,15,0,0,0,26,0A3.07,3.07,0,0,0,29,14.47ZM16,21a5,5,0,1,1,5-5A5,5,0,0,1,16,21Z" fill="#000000" fillRule="nonzero"></path><circle cx="16" cy="16" r="3" fill="#000000" fillRule="nonzero"></circle></g></svg>
                                                 </Link>
                                                 <Link to={`/${trainingContent._id}/edit-training`}  className="btn btn-secondary light mr-2">

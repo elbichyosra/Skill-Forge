@@ -59,7 +59,9 @@ import Error403 from "./pages/Error403";
 import TrainingContentList from "./components/trainingContent/trainingContentList";
 import AddTrainingContent from "./components/trainingContent/addTrainingContent";
 import EditTrainingContent from "./components/trainingContent/editTrainingContent";
-import MediaTable from"./components/mediaMaterial/mediaTable"
+import DetailsTrainingContent from "./components/trainingContent/trainingContentDetails";
+import MediaTable from"./components/mediaMaterial/mediaTable";
+import MediaDetails from "./components/mediaMaterial/mediaDetails";
 import { ThemeContext } from "../context/ThemeContext";
 
 
@@ -116,8 +118,10 @@ const Markup = () => {
     { url: 'training-table', component: TrainingContentList },
     { url: 'new-training', component: AddTrainingContent },
     { url: ':id/edit-training', component: EditTrainingContent },
+    { url: ':id/details-training', component: DetailsTrainingContent },
     //media Material
     { url: ':trainingContentId/media-table', component: MediaTable },
+    { url: ':id/media-details', component: MediaDetails},
   ];
   let path = window.location.pathname;
   path = path.split("/");

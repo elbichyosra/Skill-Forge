@@ -7,7 +7,7 @@ import ServiceLandingPage from "demos/ServiceLandingPage.js";
 
 import ServiceLandingPageImageSrc from "images/demo/ServiceLandingPage.jpeg";
 
-
+import TrainingListPage from 'pages/TrainingListPage';
 
 
 export const components = {
@@ -20,7 +20,17 @@ export const components = {
     },
  
   },
-
+ 
+  pages: {
+  
+    TrainingListPage: {
+      component: TrainingListPage,
+      
+      url: "/components/pages/TrainingListPage",
+    },
+ 
+  },
+ 
  
 }
 

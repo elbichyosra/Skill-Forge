@@ -2,8 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch, useSelector } from "react-redux";
-import { Badge, Alert, Modal } from "react-bootstrap";
+import { Badge, Alert } from "react-bootstrap";
 import MediaItem from './mediaItem';
+import Modal from './modal';
+import MediaForm from './mediaForm';
+import MediaTable from './medias';
+
 const MediaList = () => {
     const { trainingContentId } = useParams();
     const [mediaMaterials, setMediaMaterials] = useState([]);
@@ -16,7 +20,6 @@ const MediaList = () => {
     });
     const [editModal, setEditModal] = useState(false); // State to control edit modal visibility
     const [editMediaMaterial, setEditMediaMaterial] = useState({
-       
         title: '',
         description: '',
         file: null
@@ -73,10 +76,8 @@ const MediaList = () => {
         } catch (error) {
             console.error('Error adding media material:', error);
             setAlertMessage({ type: 'danger', message: 'Error adding media material!' });
-           
         }
         finally {
-            // Utiliser setTimeout une seule fois après chaque ajout ou suppression
             setTimeout(() => {
                 setAlertMessage(null);
             }, 3000);
@@ -176,114 +177,23 @@ const MediaList = () => {
                     <div className="card-header">
                         <h4 className="card-title">Media Material List</h4>
                         <Link to={"#"} className="btn btn-primary me-3 btn-sm" onClick={() => setAddCard(true)}>
-                            <i className="fas fa-plus me-2"></i>Add New Media Material
+                            <i className="fas fa-plus me-2"></i>Add New Media 
                         </Link>
                     </div>
                     <div>
-                       
-                        <Modal show={addCard} onHide={() => setAddCard(false)}>
-                            <div role="document">
-                                <div className="modal-content">
-                                    <form onSubmit={handleAddFormSubmit}>
-                                        <div className="modal-header">
-                                            <h4 className="modal-title fs-20">Add Media Material</h4>
-                                            <button type="button" className="btn-close" onClick={() => setAddCard(false)} data-dismiss="modal"><span></span></button>
-                                        </div>
-                                        <div className="modal-body">
-                                            <div className="add-contact-box">
-                                                <div className="add-contact-content">
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">Title</label>
-                                                        <input type="text" className="form-control" name="title" value={newMediaMaterial.title} onChange={handleAddFormChange} required />
-                                                    </div>
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">Description</label>
-                                                        <textarea className="form-control" name="description" value={newMediaMaterial.description} onChange={handleAddFormChange} required></textarea>
-                                                    </div>
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">File</label>
-                                                        <input type="file" className="form-control" name="file" onChange={handleFileChange} required />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="submit" className="btn btn-success">Add</button>
-                                            <button type="button" className="btn btn-danger" onClick={() => setAddCard(false)}>Cancel</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                        <Modal show={addCard} onHide={() => setAddCard(false)} title="Add" onSubmit={handleAddFormSubmit}>
+                            <MediaForm values={newMediaMaterial} onChange={handleAddFormChange} handleFile={handleFileChange} />
                         </Modal>
-                        
-                        <Modal show={editModal} onHide={() => setEditModal(false)}>
-                            <div role="document">
-                                <div className="modal-content">
-                                    <form onSubmit={handleEditFormSubmit}>
-                                        <div className="modal-header">
-                                            <h4 className="modal-title fs-20">Edit Media Material</h4>
-                                            <button type="button" className="btn-close" onClick={() => setEditModal(false)} data-dismiss="modal"><span></span></button>
-                                        </div>
-                                        <div className="modal-body">
-                                            <div className="add-contact-box">
-                                                <div className="add-contact-content">
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">Title</label>
-                                                        <input type="text" className="form-control" name="title" value={editMediaMaterial.title} onChange={handleEditFormChange} required />
-                                                    </div>
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">Description</label>
-                                                        <textarea className="form-control" name="description" value={editMediaMaterial.description} onChange={handleEditFormChange} required></textarea>
-                                                    </div>
-                                                    <div className="form-group mb-3">
-                                                        <label className="text-black font-w500">File</label>
-                                                        <input type="file" className="form-control" name="file"onChange={handleFileChange2} />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="submit" className="btn btn-success">Update</button>
-                                            <button type="button" className="btn btn-danger" onClick={() => setEditModal(false)}>Cancel</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
+                        <Modal show={editModal} onHide={() => setEditModal(false)} title="Edit" onSubmit={handleEditFormSubmit}>
+                            <MediaForm values={editMediaMaterial} onChange={handleEditFormChange} handleFile={handleFileChange2} />
                         </Modal>
                     </div>
                     <div className="card-body">
-                        <div className="w-100 table-responsive">
-                            <table id="example" className="display w-100 dataTable">
-                                <thead>
-                                    <tr role="row">
-                                        <th>Title</th>
-                                        <th>Description</th>
-                                        <th>File</th>
-                                        <th className="text-center">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                {mediaMaterials.map((mediaMaterial) => (
-                                        // <MediaItem key={mediaMaterial._id} mediaMaterial={mediaMaterial} onDelete={() => handleDeleteMediaMaterial(mediaMaterial._id)} token={token} />
-                                   
-                                        <tr key={mediaMaterial._id}>
-                                        <td>{mediaMaterial.title}</td>
-                                        <td>{mediaMaterial.description}</td>
-                                        <td>{mediaMaterial.file.split('\\').pop().split('-').slice(1).join('-')}</td>
-                                        <td className="text-center">
-                                            <div className="justify-content-end">
-                                                <Link to="#" onClick={() => handleEditModal(mediaMaterial._id)} className="btn btn-primary shadow btn-xs sharp me-1">
-                                                    <i className="fas fa-pencil-alt"></i>
-                                                </Link>
-                                                <button onClick={() => handleDeleteMediaMaterial(mediaMaterial._id)} className="btn btn-danger shadow btn-xs sharp">
-                                                    <i className="fa fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>))}
-                                </tbody>
-                            </table>
-                        </div>
+                        <MediaTable
+                            mediaMaterials={mediaMaterials}
+                            onDelete={handleDeleteMediaMaterial}
+                            onEdit={handleEditModal}
+                        />
                     </div>
                 </div>
             </div>

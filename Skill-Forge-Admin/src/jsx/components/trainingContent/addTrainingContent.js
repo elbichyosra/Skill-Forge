@@ -30,8 +30,17 @@ const AddTrainingContent = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
 
         try {
+              // Vérifier si la date de fin est supérieure à la date système
+        const endDate = new Date(formData.endDate);
+        const currentDate = new Date();
+
+        if (endDate <= currentDate) {
+        setAlertMessage({ type: 'danger', message: 'End date must be greater than the current system date!' });
+        return;
+        }
             const formDataToSend = new FormData();
             formDataToSend.append('title', formData.title);
             formDataToSend.append('description', formData.description);
@@ -78,7 +87,7 @@ const AddTrainingContent = () => {
           
         }
         finally {
-            // Utiliser setTimeout une seule fois après chaque ajout ou suppression
+            
             setTimeout(() => {
                 setAlertMessage(null);
             }, 2000);
@@ -128,7 +137,8 @@ const AddTrainingContent = () => {
                                     </div>
                                     <div className="col-xl-6 col-md-6 mb-4">
                                         <label className="form-label font-w600">Image<span className="text-danger scale5 ms-2">*</span></label>
-                                        <input type="file" className="form-control solid" onChange={handleImageChange} />
+                                        <input type="file" accept="image/jpeg, image/png" className="form-control solid" onChange={handleImageChange} />
+                                        <small className="text-muted">Seuls les fichiers JPEG et PNG sont acceptés.</small>
                                     </div>
                                     {formProgress > 0 && formData.image && (
                                      <div className="col-12">
