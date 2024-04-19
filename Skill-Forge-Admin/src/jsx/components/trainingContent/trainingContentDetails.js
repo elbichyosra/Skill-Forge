@@ -10,7 +10,8 @@ const DetailsTraining = () => {
 
     useEffect(() => {
         const fetchTrainingContent = async () => {
-            try {
+            if(token){ try {
+               
                 const response = await axios.get(`http://localhost:5000/trainingContent/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token}`
@@ -20,7 +21,7 @@ const DetailsTraining = () => {
             } catch (error) {
                 console.error('Error fetching training content:', error);
             }
-        };
+        };}
         fetchTrainingContent();
     }, [id, token]);
 

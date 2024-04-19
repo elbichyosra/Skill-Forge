@@ -7,9 +7,9 @@ import ServiceLandingPage from "demos/ServiceLandingPage.js";
 
 import ServiceLandingPageImageSrc from "images/demo/ServiceLandingPage.jpeg";
 
-import TrainingListPage from 'pages/TrainingListPage';
+import trainingList from 'components/trainingContent/trainingList';
 
-
+import trainingDetails from 'components/trainingContent/trainingDetails';
 export const components = {
   landingPages: {
   
@@ -24,10 +24,15 @@ export const components = {
   pages: {
   
     TrainingListPage: {
-      component: TrainingListPage,
+      component: trainingList,
       
       url: "/components/pages/TrainingListPage",
     },
+    // TrainingDetails: {
+    //   component: trainingDetails,
+      
+    //   url: "/components/pages/TrainingDetails/:id",
+    // },
  
   },
  

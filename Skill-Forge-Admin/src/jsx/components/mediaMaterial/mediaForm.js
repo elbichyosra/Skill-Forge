@@ -15,8 +15,8 @@ const MediaForm = ({ onSubmit, onChange, values ,handleFile}) => {
         </div>
         <div className="form-group mb-3">
           <label className="text-black font-w500">File</label>
-          <input type="file" accept="image/jpeg, image/png, video/mp4, application/pdf" className="form-control" name="file" onChange={handleFile} required/>
-          <small className="text-muted">Seuls les fichiers JPEG, PNG, MP4 et PDF sont acceptés.</small>
+          <input type="file" accept="video/mp4, application/pdf" className="form-control" name="file" onChange={handleFile} required/>
+          <small className="text-muted">Seuls les fichiers MP4 et PDF sont acceptés.</small>
         </div>
       </div>
     </div>

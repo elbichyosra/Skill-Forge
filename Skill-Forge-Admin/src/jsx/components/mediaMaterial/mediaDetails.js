@@ -42,9 +42,11 @@ const MediaDetails = () => {
                                     <embed src={`http://localhost:5000/${mediaMaterial.file}`} type="application/pdf" width="100%" height="600px" />
                                 ) : mediaMaterial.file.includes('.mp4') ? (
                                     <video controls src={`http://localhost:5000/${mediaMaterial.file}`} className="img-fluid rounded" style={{ maxHeight: '300px', width: '100%' }} />
-                                ) : (
-                                    <img src={`http://localhost:5000/${mediaMaterial.file}`} alt="Media Material" className="img-fluid rounded" style={{ maxHeight: '300px', width: '100%' }} />
-                                )}
+                                ) :(<></>)
+                                // : (
+                                //     <img src={`http://localhost:5000/${mediaMaterial.file}`} alt="Media Material" className="img-fluid rounded" style={{ maxHeight: '300px', width: '100%' }} />
+                                // )
+                                }
                             </div>
                             <div className="col-md-6">
                                 <h3 className="fs-34 mb-4 mt-3 font-weight-bold">{mediaMaterial.title}</h3>
