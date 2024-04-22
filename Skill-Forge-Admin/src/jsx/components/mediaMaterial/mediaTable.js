@@ -58,6 +58,7 @@ const MediaList = () => {
             formData.append('file', newMediaMaterial.file);
             formData.append('title', newMediaMaterial.title);
             formData.append('description', newMediaMaterial.description);
+           
             formData.append('trainingContent', trainingContentId);
             const response = await axios.post('http://localhost:5000/mediaMaterial/', formData, {
                 headers: {

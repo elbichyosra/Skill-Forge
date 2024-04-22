@@ -6,6 +6,7 @@ const mediaMaterialsSchema = new Schema({
     title: { type: String, required: true },
     description: { type: String },
     file: { type: String ,required:true},
+    duration: { type: Number },
     trainingContent: { type: Schema.Types.ObjectId, ref: "trainingContent" },
    
 },

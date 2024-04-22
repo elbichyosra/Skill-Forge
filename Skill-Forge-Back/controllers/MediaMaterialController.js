@@ -1,30 +1,51 @@
 const MediaMaterials = require('../models/mediaMaterials');
 const TrainingContent = require('../models/trainingContent');
-
+const {getVideoDurationInSeconds} = require('get-video-duration');
 // Create a new Media Material
 
 exports.create = async (req, res) => {
-    try {
-        const { title, description, trainingContent } = req.body;
-        
-        // Créer un nouvel objet Media Material avec les détails téléchargés
-        const newMediaMaterial = await MediaMaterials.create({
-            title,
-            description,
-            file: req.file.path, 
-            trainingContent
-        });
+  try {
+      const { title, description, trainingContent } = req.body;
+      
+      // Create a new Media Material object with the uploaded details
+      const newMediaMaterial = await MediaMaterials.create({
+          title,
+          description,
+          file: req.file.path, 
+          trainingContent
+      });
+      
+      if (req.file.mimetype.startsWith('video/')) {
+          // Extract video duration
+          getVideoDurationInSeconds(req.file.path)
+              .then(duration => {
+                  // Duration in seconds
+                  // const roundedDuration = Math.round(duration * 100) / 100;
+                  // newMediaMaterial.duration = roundedDuration;
 
-        // Ajouter la référence au Training Content
-        await TrainingContent.findByIdAndUpdate(trainingContent, {
-            $push: { mediaMaterials: newMediaMaterial._id }
-        });
+                  // Add duration to the Media Material
+                  newMediaMaterial.duration =  Math.round(duration);
 
-        res.status(201).json(newMediaMaterial);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+                  // Save the Media Material with duration
+                  newMediaMaterial.save();
+              })
+              .catch(err => {
+                  console.error('Error extracting video duration:', err);
+                  res.status(500).json({ error: 'Error extracting video duration' });
+              });
+      }
+
+      // Add reference to Training Content
+      await TrainingContent.findByIdAndUpdate(trainingContent, {
+          $push: { mediaMaterials: newMediaMaterial._id }
+      });
+
+      res.status(201).json(newMediaMaterial);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
 };
+
 
 
 
