@@ -1,52 +1,69 @@
 const MediaMaterials = require('../models/mediaMaterials');
 const TrainingContent = require('../models/trainingContent');
-const {getVideoDurationInSeconds} = require('get-video-duration');
-// Create a new Media Material
 
-exports.create = async (req, res) => {
-  try {
-      const { title, description, trainingContent } = req.body;
-      
-      // Create a new Media Material object with the uploaded details
-      const newMediaMaterial = await MediaMaterials.create({
-          title,
-          description,
-          file: req.file.path, 
-          trainingContent
-      });
-      
-      if (req.file.mimetype.startsWith('video/')) {
-          // Extract video duration
-          getVideoDurationInSeconds(req.file.path)
-              .then(duration => {
-                  // Duration in seconds
-                  // const roundedDuration = Math.round(duration * 100) / 100;
-                  // newMediaMaterial.duration = roundedDuration;
 
-                  // Add duration to the Media Material
-                  newMediaMaterial.duration =  Math.round(duration);
+const { getVideoDurationInSeconds } = require('get-video-duration');
 
-                  // Save the Media Material with duration
-                  newMediaMaterial.save();
-              })
-              .catch(err => {
-                  console.error('Error extracting video duration:', err);
-                  res.status(500).json({ error: 'Error extracting video duration' });
-              });
-      }
+// Function to convert duration from seconds to formatted string
+const formatDuration = (seconds) => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.round(seconds % 60);
 
-      // Add reference to Training Content
-      await TrainingContent.findByIdAndUpdate(trainingContent, {
-          $push: { mediaMaterials: newMediaMaterial._id }
-      });
+    let formattedDuration = '';
 
-      res.status(201).json(newMediaMaterial);
-  } catch (error) {
-      res.status(500).json({ error: error.message });
-  }
+    if (hours > 0) {
+        formattedDuration += `${hours}h `;
+    }
+
+    if (minutes > 0) {
+        formattedDuration += `${minutes}min `;
+    }
+
+    if (remainingSeconds > 0) {
+        formattedDuration += `${remainingSeconds}sec`;
+    }
+
+    return formattedDuration.trim();
 };
 
+// Create a new Media Material
+exports.create = async (req, res) => {
+    try {
+        const { title, description, trainingContent } = req.body;
 
+        // Create a new Media Material object with the uploaded details
+        const newMediaMaterial = await MediaMaterials.create({
+            title,
+            description,
+            file: req.file.path,
+            trainingContent
+        });
+
+        if (req.file.mimetype.startsWith('video/')) {
+            // Extract video duration
+            const durationInSeconds = await getVideoDurationInSeconds(req.file.path);
+
+            // Convert duration to formatted string
+            const formattedDuration = formatDuration(durationInSeconds);
+
+            // Add formatted duration to the Media Material
+            newMediaMaterial.duration = formattedDuration;
+
+            // Save the Media Material with duration
+            await newMediaMaterial.save();
+        }
+
+        // Add reference to Training Content
+        await TrainingContent.findByIdAndUpdate(trainingContent, {
+            $push: { mediaMaterials: newMediaMaterial._id }
+        });
+
+        res.status(201).json(newMediaMaterial);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
 
 
 

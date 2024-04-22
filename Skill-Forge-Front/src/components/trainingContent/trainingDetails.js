@@ -14,6 +14,7 @@ import Footer from 'components/footers/FiveColumnWithInputForm.js';
 import AnimationRevealPage from 'helpers/AnimationRevealPage.js';
 import styled from 'styled-components';
 import { FiCalendar, FiTag, FiCheckCircle } from 'react-icons/fi';
+
 export default () => {
  
 const Content = tw.div`flex items-center text-sm text-gray-600 mb-2`;
