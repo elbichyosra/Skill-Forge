@@ -26,7 +26,7 @@ const Subheading = tw.h2`text-lg font-semibold text-primary-500 mt-6`;
 
 const Description = tw.p`w-full text-center`;
 
-const Column = tw.div`flex flex-col md:flex-row items-start`;
+const Column = tw.div`flex flex-col md:flex-row items-start `;
 const LeftSection = tw.div`md:w-1/3`;
 const RightSection = tw.div`md:w-2/3 min-h-[300px]`;
 
@@ -75,7 +75,10 @@ export default () => {
             }
           });
           // Add 'isChecked' property to each mediaMaterial
-          const mediaWithCheckboxes = response.data.map(media => ({ ...media, isChecked: false }));
+          const mediaWithCheckboxes = response.data.map(media => ({
+            ...media,
+            isChecked: localStorage.getItem(`isChecked_${media._id}`) === 'true'
+          }));
           setMediaMaterials(mediaWithCheckboxes);
         } catch (error) {
           console.error('Error fetching media material:', error);
@@ -85,34 +88,45 @@ export default () => {
     fetchMediaMaterials();
   }, [token, id]);
 
-  const handleCheckboxChange = (index) => {
+  const handleCheckboxChange = (mediaId) => {
     setMediaMaterials(prevState =>
-      prevState.map((media, i) =>
-        i === index ? { ...media, isChecked: !media.isChecked } : media
+      prevState.map(media =>
+        media._id === mediaId ? { ...media, isChecked: !media.isChecked } : media
       )
     );
   };
 
-  const handleVideoEnded = (index) => {
+  const handleVideoEnded = (mediaId) => {
     setMediaMaterials(prevState =>
-      prevState.map((media, i) =>
-        i === index && media.file.includes('.mp4') ? { ...media, isChecked: true } : media
+      prevState.map(media =>
+        media._id === mediaId && media.file.includes('.mp4') ? { ...media, isChecked: true } : media
       )
     );
   };
 
-  const handleTitleClick = (index) => {
+  const handleTitleClick = (mediaId) => {
+    // Check if all PDFs are checked, if so, uncheck all. Otherwise, check all.
+    const areAllPdfChecked = mediaMaterials.every(media => media.file.includes('.pdf') && media.isChecked);
     setMediaMaterials(prevState =>
-      prevState.map((media, i) =>
-        i === index && media.file.includes('.pdf') ? { ...media, isChecked: !media.isChecked } : media
+      prevState.map(media =>
+        media._id === mediaId && media.file.includes('.pdf')
+          ? { ...media, isChecked: !areAllPdfChecked }
+          : media
       )
     );
   };
+
+  // Update localStorage when checkboxes are changed
+  useEffect(() => {
+    mediaMaterials.forEach(media =>
+      localStorage.setItem(`isChecked_${media._id}`, media.isChecked)
+    );
+  }, [mediaMaterials]);
 
   return (
     <AnimationRevealPage>
       <Header />
-      <Container>
+      <Container >
         <ContentWithPaddingXl>
           <Column>
             <LeftSection>
@@ -128,7 +142,7 @@ export default () => {
                         }}
                         className="group"
                       >
-                        <Title onClick={() => handleTitleClick(index)}>
+                        <Title onClick={() => handleTitleClick(mediaMaterial._id)}>
                           <Text>{mediaMaterial.title}</Text>
                           <TitleToggleIcon
                             variants={{
@@ -164,7 +178,7 @@ export default () => {
                             </Info>
                             <Checkbox
                               checked={mediaMaterial.isChecked}
-                              onChange={() => handleCheckboxChange(index)}
+                              onChange={() => handleCheckboxChange(mediaMaterial._id)}
                             />
                           </div>
                           <Info>
@@ -206,7 +220,7 @@ export default () => {
                             src={`http://localhost:5000/${mediaMaterials[activeTitleIndex].file}`}
                             className="img-fluid rounded"
                             style={{ maxHeight: '300px', width: '100%' }}
-                            onEnded={() => handleVideoEnded(activeTitleIndex)}
+                            onEnded={() => handleVideoEnded(mediaMaterials[activeTitleIndex]._id)}
                           />
                         </FileMedia>
                       ) : null}

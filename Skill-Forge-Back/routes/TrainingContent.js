@@ -18,5 +18,8 @@ router.put('/:id',keycloak.protect('backoffice:admin'),upload.single('image'), t
 
 // Route pour supprimer un trainingContent
 router.delete('/:id',keycloak.protect('backoffice:admin'), trainingContentController.deleteTrainingContent);
-
+// Route pour assigner un trainingContent
+router.post('/assigned',keycloak.protect('backoffice:admin'),trainingContentController.assignTrainingContentToUser);
+// Route pour récupérer les assigned trainingContents
+router.get('/assigned/:userId',keycloak.protect(),trainingContentController.getAssignedTrainingContentForUser);
 module.exports = router;
