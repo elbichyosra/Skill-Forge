@@ -153,15 +153,11 @@ exports.assignTrainingContentToUser = async (req, res) => {
 
         console.log('Training content assigned successfully to user:', trainingContent);
 
-    
-
-       
-
-        // Define the data to be inserted into the template
+     // Define the data to be inserted into the template
         const templateData = {
             userName,
             trainingTitle: trainingContent.title,
-            trainingDescription: trainingContent.description,
+            trainingDeadline: new Date(trainingContent.endDate).toLocaleString('fr-FR', {  year: 'numeric', month: 'short', day: '2-digit'}),
             // Add more data fields as needed
         };
 

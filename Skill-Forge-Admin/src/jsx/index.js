@@ -56,10 +56,13 @@ import Pickers from "./components/Forms/Pickers/Pickers";
 import jQueryValidation from "./components/Forms/jQueryValidation/jQueryValidation";
 
 import Error403 from "./pages/Error403";
+//Training Content
 import TrainingContentList from "./components/trainingContent/trainingContentList";
 import AddTrainingContent from "./components/trainingContent/addTrainingContent";
 import EditTrainingContent from "./components/trainingContent/editTrainingContent";
 import DetailsTrainingContent from "./components/trainingContent/trainingContentDetails";
+import AssignTrainingContent from "./components/trainingContent/assignTrainingContent";
+//Media 
 import MediaTable from"./components/mediaMaterial/mediaTable";
 import MediaDetails from "./components/mediaMaterial/mediaDetails";
 import { ThemeContext } from "../context/ThemeContext";
@@ -119,6 +122,7 @@ const Markup = () => {
     { url: 'new-training', component: AddTrainingContent },
     { url: ':id/edit-training', component: EditTrainingContent },
     { url: ':id/details-training', component: DetailsTrainingContent },
+    { url: 'assign-training', component: AssignTrainingContent },
     //media Material
     { url: ':trainingContentId/media-table', component: MediaTable },
     { url: ':id/media-details', component: MediaDetails},

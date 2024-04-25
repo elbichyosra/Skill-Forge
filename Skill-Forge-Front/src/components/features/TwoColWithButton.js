@@ -36,7 +36,8 @@ const Description = tw.p`mt-4 text-center md:text-left text-sm md:text-base lg:t
 
 const PrimaryButton = styled(PrimaryButtonBase)(props => [
   tw`mt-8 md:mt-8 text-sm inline-block mx-auto md:mx-0`,
-  props.buttonRounded && tw`rounded-full`
+  props.buttonRounded && tw`rounded-full`,
+  props.disabled && tw`cursor-not-allowed opacity-50`
 ]);
 
 
@@ -52,6 +53,7 @@ export default ({
   primaryButtonUrl = "https://timerse.com",
   imageSrc = TeamIllustrationSrc,
   buttonRounded = true,
+  primaryButtonDisabled = false,
   imageRounded = true,
   imageBorder = false,
   imageShadow = false,
@@ -74,7 +76,7 @@ export default ({
             <Subheading>{subheading}</Subheading>
             <Heading>{heading}</Heading>
             <Description>{description}</Description>
-            <PrimaryButton buttonRounded={buttonRounded} as="a" href={primaryButtonUrl}>
+            <PrimaryButton buttonRounded={buttonRounded} as="a" href={primaryButtonUrl} disabled={primaryButtonDisabled}>
               {primaryButtonText}
             </PrimaryButton>
           </TextContent>

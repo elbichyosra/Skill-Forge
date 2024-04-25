@@ -83,7 +83,8 @@ const DetailsTraining = () => {
                     </div>
                     <div className="card-footer d-flex justify-content-end">
                       
-                        <Link to={`/${trainingContent._id}/media-table`} className="btn btn-primary">View Media Materials</Link>
+                        <Link to={`/${trainingContent._id}/media-table`} className="btn btn-secondary">View Media Materials</Link>
+                    
                     </div>
                 </div>
             </div>

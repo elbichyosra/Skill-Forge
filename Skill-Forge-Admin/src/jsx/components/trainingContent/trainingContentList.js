@@ -50,7 +50,7 @@ const TrainingContentList = () => {
             // Utiliser setTimeout une seule fois après chaque ajout ou suppression
             setTimeout(() => {
                 setAlertMessage(null);
-            }, 3000);
+            }, 2000);
         }
     };
 
