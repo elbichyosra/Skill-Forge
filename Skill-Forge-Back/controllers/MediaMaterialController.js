@@ -144,3 +144,35 @@ exports.delete = async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la suppression du mediaMaterial' });
   }
 };
+// Mettre à jour l'état de la case à cocher pour un utilisateur
+exports.updateCheckboxState = async (req, res) => {
+  const { userId, isChecked } = req.body;
+  const {mediaId}=req.params;
+
+  try {
+    const mediaMaterial = await MediaMaterials.findById(mediaId);
+
+    if (!mediaMaterial) {
+      return res.status(404).json({ message: 'Media material not found' });
+    }
+
+    // Recherche si l'utilisateur a déjà un état de case à cocher
+    const userCheckboxIndex = mediaMaterial.checkedByUser.findIndex(user => user.userId === userId);
+
+    if (userCheckboxIndex !== -1) {
+      // Mettre à jour l'état de la case à cocher de l'utilisateur
+      mediaMaterial.checkedByUser[userCheckboxIndex].isChecked = isChecked;
+    } else {
+      // Ajouter un nouvel état de case à cocher pour l'utilisateur
+      mediaMaterial.checkedByUser.push({ userId, isChecked });
+    }
+
+    // Sauvegarder les modifications dans la base de données
+    await mediaMaterial.save();
+
+    res.status(200).json({ message: 'Checkbox state updated successfully' });
+  } catch (error) {
+    console.error('Error updating checkbox state:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};

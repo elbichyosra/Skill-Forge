@@ -86,7 +86,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
     <NavLinks key={1}>
 
     <NavLink href="/#">About</NavLink>
-    <NavLink href="/trainingList">All Training Contents</NavLink>
+    <NavLink href="/trainingList">All Trainings</NavLink>
     <NavLink href="/assignedTrainings">Assigned Trainings</NavLink>
     {/* <NavLink href="/#">Pricing</NavLink> */}
     <NavLink href="/#">Contact Us</NavLink>

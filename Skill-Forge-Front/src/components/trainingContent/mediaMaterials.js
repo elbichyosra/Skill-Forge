@@ -12,24 +12,20 @@ import { Container, ContentWithPaddingXl } from 'components/misc/Layouts.js';
 import { ReactComponent as ChevronDownIcon } from 'feather-icons/dist/icons/chevron-down.svg';
 import { ReactComponent as PdfIcon } from 'feather-icons/dist/icons/file-text.svg';
 import { ReactComponent as VideoIcon } from 'feather-icons/dist/icons/video.svg';
-
 import { ReactComponent as SvgDecoratorBlob1 } from "images/svg-decorator-blob-7.svg";
 import { ReactComponent as SvgDecoratorBlob2 } from "images/svg-decorator-blob-8.svg";
-
 import { LuTimer } from "react-icons/lu"; 
+import { NULL } from 'sass';
 
 const Info = tw.div`flex items-center text-xs text-gray-600 mb-2`;
 const Card = tw.div`border rounded-lg bg-white shadow-md `;
 const CardBody = tw.div`p-6`;
 const CardTitle = tw.h2`text-xl font-semibold text-center`;
 const Subheading = tw.h2`text-lg font-semibold text-primary-500 mt-6`;
-
 const Description = tw.p`w-full text-center`;
-
 const Column = tw.div`flex flex-col md:flex-row items-start `;
 const LeftSection = tw.div`md:w-1/3`;
 const RightSection = tw.div`md:w-2/3 min-h-[300px]`;
-
 const FAQSContainer = tw.dl`mt-8 max-w-4xl`;
 const FAQ = tw.div`cursor-pointer select-none mt-5 px-8 sm:px-10 py-5 sm:py-4 rounded-lg text-gray-800 hover:text-gray-900 bg-gray-200 hover:bg-gray-300 transition duration-300`;
 const Title = tw.dt`flex justify-between items-center cursor-pointer`;
@@ -40,18 +36,15 @@ const TitleToggleIcon = motion(styled.span`
     ${tw`w-6 h-6`}
   }
 `);
-
 const SubTitle = motion(tw.dd`pointer-events-none text-sm sm:text-base leading-relaxed`);
 const File = tw.div`mt-5`;
 const FileTitle = tw.h2`text-xl font-semibold flex items-center`;
 const FileTypeIcon = tw.span`mr-2`;
 const FileDescription = tw.p`mt-2  text-gray-700`;
 const FileMedia = tw.div`mt-4 rounded-lg overflow-hidden`;
-
 const Checkbox = styled.input.attrs({ type: 'checkbox' })`
   ${tw`mr-2`}
 `;
-
 const DecoratorBlob1 = styled(SvgDecoratorBlob1)`
   ${tw`pointer-events-none -z-20 absolute right-0 top-0 h-56 w-56 opacity-15 transform translate-x-2/3 -translate-y-12 text-teal-400`}
 `;
@@ -59,10 +52,11 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
   ${tw`pointer-events-none -z-20 absolute left-0 bottom-0 h-64 w-64 opacity-15 transform -translate-x-2/3 text-primary-500`}
 `;
 
-export default () => {
+const MediaMaterials = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState(null);
   const [mediaMaterials, setMediaMaterials] = useState([]);
   const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state) => state.auth.userId);
   const { id } = useParams();
 
   useEffect(() => {
@@ -74,10 +68,10 @@ export default () => {
               Authorization: `Bearer ${token}`
             }
           });
-          // Add 'isChecked' property to each mediaMaterial
+        
           const mediaWithCheckboxes = response.data.map(media => ({
             ...media,
-            isChecked: localStorage.getItem(`isChecked_${media._id}`) === 'true'
+            isChecked: media.checkedByUser.some(user => user.userId === userId && user.isChecked)
           }));
           setMediaMaterials(mediaWithCheckboxes);
         } catch (error) {
@@ -86,42 +80,60 @@ export default () => {
       }
     };
     fetchMediaMaterials();
-  }, [token, id]);
+  }, [token, id, userId]);
 
-  const handleCheckboxChange = (mediaId) => {
-    setMediaMaterials(prevState =>
-      prevState.map(media =>
-        media._id === mediaId ? { ...media, isChecked: !media.isChecked } : media
-      )
-    );
+ 
+
+  const handleVideoEnded = async (mediaId) => {
+    try {
+     
+      setMediaMaterials(prevState =>
+        prevState.map(media =>
+          media._id === mediaId && media.file.includes('.mp4') ? { ...media, isChecked: true } : media
+        )
+      );
+  
+      
+      await axios.put(`http://localhost:5000/mediaMaterial/updateCheckboxState/${mediaId}`, {
+       
+        userId,
+        isChecked: true
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    } catch (error) {
+      console.error('Error updating video checkbox state:', error);
+    }
+  };
+  
+
+  const handleTitleClick = async (mediaId) => {
+    try {
+      const areAllPdfChecked = mediaMaterials.every(media => media.file.includes('.pdf') && media.isChecked);
+      const updatedMaterials = mediaMaterials.map(media => {
+        if (media._id === mediaId && media.file.includes('.pdf')) {
+          media.isChecked = !areAllPdfChecked;
+          
+        axios.put(`http://localhost:5000/mediaMaterial/updateCheckboxState/${mediaId}`, {
+            userId,
+            isChecked: media.isChecked
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+        }
+        return media;
+      });
+      setMediaMaterials(updatedMaterials);
+    } catch (error) {
+      console.error('Error updating PDF checkbox state:', error);
+    }
   };
 
-  const handleVideoEnded = (mediaId) => {
-    setMediaMaterials(prevState =>
-      prevState.map(media =>
-        media._id === mediaId && media.file.includes('.mp4') ? { ...media, isChecked: true } : media
-      )
-    );
-  };
 
-  const handleTitleClick = (mediaId) => {
-    // Check if all PDFs are checked, if so, uncheck all. Otherwise, check all.
-    const areAllPdfChecked = mediaMaterials.every(media => media.file.includes('.pdf') && media.isChecked);
-    setMediaMaterials(prevState =>
-      prevState.map(media =>
-        media._id === mediaId && media.file.includes('.pdf')
-          ? { ...media, isChecked: !areAllPdfChecked }
-          : media
-      )
-    );
-  };
-
-  // Update localStorage when checkboxes are changed
-  useEffect(() => {
-    mediaMaterials.forEach(media =>
-      localStorage.setItem(`isChecked_${media._id}`, media.isChecked)
-    );
-  }, [mediaMaterials]);
 
   return (
     <AnimationRevealPage>
@@ -178,7 +190,7 @@ export default () => {
                             </Info>
                             <Checkbox
                               checked={mediaMaterial.isChecked}
-                              onChange={() => handleCheckboxChange(mediaMaterial._id)}
+                              onChange={()=>{}}
                             />
                           </div>
                           <Info>
@@ -200,13 +212,6 @@ export default () => {
                   {activeTitleIndex !== null ? (
                     <File>
                       <FileTitle>
-                        {/* <FileTypeIcon>
-                          {mediaMaterials[activeTitleIndex].file.includes('.pdf') ? (
-                            <PdfIcon />
-                          ) : mediaMaterials[activeTitleIndex].file.includes('.mp4') ? (
-                            <VideoIcon />
-                          ) : null}
-                        </FileTypeIcon> */}
                         {mediaMaterials[activeTitleIndex].title}
                       </FileTitle>
                       {mediaMaterials[activeTitleIndex].file.includes('.pdf') ? (
@@ -244,3 +249,5 @@ export default () => {
     </AnimationRevealPage>
   );
 };
+
+export default MediaMaterials;

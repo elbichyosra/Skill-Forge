@@ -21,5 +21,6 @@ router.put('/:id',keycloak.protect('backoffice:admin'),upload.single('file'), me
 
 // Route pour supprimer un media Material
 router.delete('/:id',keycloak.protect('backoffice:admin'), mediaMaterialController.delete);
-
+// Mettre à jour l'état de la case à cocher pour un utilisateur
+router.put('/updateCheckboxState/:mediaId',keycloak.protect(), mediaMaterialController.updateCheckboxState);
 module.exports = router;
