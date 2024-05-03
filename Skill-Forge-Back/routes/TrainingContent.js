@@ -22,4 +22,8 @@ router.delete('/:id',keycloak.protect('backoffice:admin'), trainingContentContro
 router.post('/assigned',keycloak.protect('backoffice:admin'),trainingContentController.assignTrainingContentToUser);
 // Route pour récupérer les assigned trainingContents
 router.get('/assigned/:userId',keycloak.protect(),trainingContentController.getAssignedTrainingContentForUser);
+// Route pour mettre à jour le progrès d'un user dans un training
+router.put('/progress/:trainingId/:userId', keycloak.protect(),trainingContentController.updateProgress);
+// Route pour enregistrer la participation à l'entraînement
+router.post('/participate/:trainingId/:userId', keycloak.protect(),trainingContentController.participateInTraining);
 module.exports = router;

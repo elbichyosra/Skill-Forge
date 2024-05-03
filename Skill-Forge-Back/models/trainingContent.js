@@ -11,7 +11,9 @@ const trainingContentSchema = new Schema({
     endDate: { type: Date },
     mediaMaterials: [{ type: Schema.Types.ObjectId, ref: "mediaMaterials" }],
     userId:{type:String,required:true},
+    participants: [{ type:String}],
     assignedUsers: [{ type:String}],
+    userProgress: { type: Map, of: Number, default: {} },
 },
 {
   timestamps: true,

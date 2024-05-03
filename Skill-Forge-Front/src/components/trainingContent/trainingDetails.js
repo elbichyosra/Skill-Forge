@@ -118,7 +118,7 @@ export default () => {
           textOnLeft={false}
           primaryButtonText="Participate in this training"
           primaryButtonUrl={`/${trainingContent && trainingContent._id}/mediasList`}
-          primaryButtonDisabled={isParticipateDisabled()} // Ajout de la condition de désactivation
+       
           imageSrc={trainingContent && trainingContent.image ? `http://localhost:5000/${trainingContent.image.replace(/\\/g, '/')}` : ''}
           imageCss={imageCss}
           imageDecoratorBlob={true}

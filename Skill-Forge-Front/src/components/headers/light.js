@@ -6,7 +6,7 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 
 import useAnimatedNavToggler from "../../helpers/useAnimatedNavToggler.js";
 
-import logo from "../../images/logo.svg";
+import logo from "../../images/Skill (2).png";
 import { ReactComponent as MenuIcon } from "feather-icons/dist/icons/menu.svg";
 import { ReactComponent as CloseIcon } from "feather-icons/dist/icons/x.svg";
 import useAuth from "../../hooks/useAuth";
@@ -85,11 +85,11 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
     // </NavLinks>
     <NavLinks key={1}>
 
-    <NavLink href="/#">About</NavLink>
+    <NavLink href="/#">Home</NavLink>
     <NavLink href="/trainingList">All Trainings</NavLink>
     <NavLink href="/assignedTrainings">Assigned Trainings</NavLink>
     {/* <NavLink href="/#">Pricing</NavLink> */}
-    <NavLink href="/#">Contact Us</NavLink>
+    {/* <NavLink href="/#">Contact Us</NavLink> */}
     {/* <NavLink href="/#">Testimonials</NavLink> */}
    
     {isLogin ? (
@@ -118,7 +118,7 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
   const defaultLogoLink = (
     <LogoLink href="/">
       <img src={logo} alt="logo" />
-      Treact
+      Skill Forge
     </LogoLink>
   );
 

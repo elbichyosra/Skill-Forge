@@ -12,6 +12,7 @@ import { FiCalendar, FiTag, FiCheckCircle } from 'react-icons/fi';
 import Header from "components/headers/light.js";
 import Footer from "components/footers/FiveColumnWithInputForm.js";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
+import ProgressBar from './progressBar';
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
 const Headers = tw(SectionHeading)`text-primary-500`;
 
@@ -108,6 +109,7 @@ export default ({ heading = 'Assigned Training Contents' }) => {
                       </CardInfo>
                 
                     </CardText>
+                    <ProgressBar trainingId={trainingContent._id} />
                   </Card>
                 </a>
               </CardContainer>
