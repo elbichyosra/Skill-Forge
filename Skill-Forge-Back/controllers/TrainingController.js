@@ -205,7 +205,10 @@ exports.updateProgress = async (req, res) => {
       if (!training.mediaMaterials || training.mediaMaterials.length === 0) {
         return ;
       }
-  
+     // Vérifier si l'utilisateur est un participant dans la formation
+     if (!training.participants.includes(userId)) {
+        return res.status(403).json({ message: "L'utilisateur n'est pas un participant dans cette formation." });
+      }
       // Calculer le progrès de l'utilisateur dans cet training
       const mediaMaterialsCheckedByUser = training.mediaMaterials.filter(material => {
         return material.checkedByUser.some(user => user.userId === userId && user.isChecked);
@@ -220,8 +223,8 @@ exports.updateProgress = async (req, res) => {
       // Enregistrer les modifications
       await training.save();
   
-      res.status(200).json({ message: "Progrès mis à jour avec succès." ,progress});
-    } catch (error) {
+      res.status(200).json({ message: "Progrès mis à jour avec succès." ,progress});}
+     catch (error) {
       console.error("Erreur lors de la mise à jour du progrès :", error);
       res.status(500).json({ message: "Erreur lors de la mise à jour du progrès." });
     }
@@ -238,17 +241,17 @@ exports.participateInTraining = async (req, res) => {
         }
 
         // Vérification si l'utilisateur est déjà participant
-        if (training.participants.includes(userId)) {
-            return res.status(400).json({ message: "L'utilisateur participe déjà à cet entraînement." });
-        }
+        if (!training.participants.includes(userId)) {
+           
+        
 
         // Ajout de l'utilisateur à la liste des participants
-        training.participants.push(userId);
+        training.participants.push(userId);}
 
         // Enregistrement des modifications
         await training.save();
 
-        res.status(200).json({ message: "Participation enregistrée avec succès." });
+        res.status(200).json({ message: "Participation enregistrée avec succès." ,training});
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de l'enregistrement de la participation." });

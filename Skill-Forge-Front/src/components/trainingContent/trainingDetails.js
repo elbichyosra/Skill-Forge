@@ -11,7 +11,7 @@ import Footer from 'components/footers/FiveColumnWithInputForm.js';
 import AnimationRevealPage from 'helpers/AnimationRevealPage.js';
 import styled from 'styled-components';
 import { FiCalendar, FiTag, FiCheckCircle } from 'react-icons/fi';
-
+import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 export default () => {
   const Content = tw.div`flex items-center text-sm text-gray-600 mb-2`;
   const IconWrapper = tw.span`mr-2 flex items-center text-primary-500`;
@@ -31,13 +31,17 @@ export default () => {
       }
     }}
   `;
-
+  const PrimaryButton = styled(PrimaryButtonBase)(props => [
+    tw`mt-8 md:mt-8 text-sm inline-block mx-auto md:mx-0`,
+    props.buttonRounded && tw`rounded-full`,
+    props.disabled && tw`cursor-not-allowed opacity-50`
+  ]);
   const [showDescription, setShowDescription] = useState(false);
   const [error, setError] = useState(null);
   const { id } = useParams();
   const [trainingContent, setTrainingContent] = useState(null);
   const token = useSelector((state) => state.auth.token);
-
+const userId=useSelector((state) => state.auth.userId);
   useEffect(() => {
     const fetchTrainingContent = async () => {
       if (token) {
@@ -76,7 +80,24 @@ export default () => {
     const deadline = new Date(trainingContent.endDate);
     return trainingContent.status === 'unavailable' || deadline < currentDate;
   };
-
+  const handleParticipateClick = async (trainingId) => {
+    try {
+      const response = await axios.post(`http://localhost:5000/trainingContent/participate/${trainingId}/${userId}`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status === 200) {
+        // Redirigez l'utilisateur vers la page de la liste des médias de cette formation
+        window.location.href = `/${trainingId}/mediasList`;}
+      // Si la participation est enregistrée avec succès, redirigez l'utilisateur vers la page de liste des médias de la formation
+    console.log(response.data)
+    } catch (error) {
+      console.error('Erreur lors de la participation à la formation :', error);
+      // Gérez les erreurs si nécessaire
+    }
+  };
+  
   return (
     <>
       <AnimationRevealPage>
@@ -112,13 +133,17 @@ export default () => {
             {trainingContent && trainingContent.status === 'unavailable' ? "This training is not available." : "The deadline for this training has passed."}
           </div>
         )}
+        <PrimaryButton
+  buttonRounded={false}
+  onClick={() => handleParticipateClick(trainingContent && trainingContent._id)}
+>
+Participate in this training
+</PrimaryButton>
             </>
           }
           buttonRounded={false}
           textOnLeft={false}
-          primaryButtonText="Participate in this training"
-          primaryButtonUrl={`/${trainingContent && trainingContent._id}/mediasList`}
-       
+        
           imageSrc={trainingContent && trainingContent.image ? `http://localhost:5000/${trainingContent.image.replace(/\\/g, '/')}` : ''}
           imageCss={imageCss}
           imageDecoratorBlob={true}

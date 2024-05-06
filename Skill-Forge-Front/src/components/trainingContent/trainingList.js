@@ -13,13 +13,18 @@ import Header from "components/headers/light.js";
 import Footer from "components/footers/FiveColumnWithInputForm.js";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import ProgressBar from './progressBar';
+import { PrimaryButton as PrimaryButtonBase } from "../misc/Buttons";
+import { ReactComponent as ChevronLeftIcon } from "feather-icons/dist/icons/chevron-left.svg";
+import { ReactComponent as ChevronRightIcon } from "feather-icons/dist/icons/chevron-right.svg";
 const HeaderRow = tw.div`flex justify-between items-center flex-col xl:flex-row`;
+
 const Headers = tw(SectionHeading)`text-primary-500`;
 
 const TabContent = tw(motion.div)`mt-6 flex flex-wrap sm:-mr-10 md:-mr-6 lg:-mr-12`;
 const CardContainer = tw.div`mt-6 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 justify-center`;
 
-const Card = tw(motion.div)`bg-white rounded-lg shadow-md overflow-hidden border border-gray-200`;
+const Card = tw(motion.div)`bg-white rounded-lg shadow-md overflow-hidden border border-gray-200 `;
+
 const CardImageContainer = styled.div`
   ${(props) =>
     props.imageSrc &&
@@ -42,11 +47,39 @@ const DecoratorBlob1 = styled(SvgDecoratorBlob1)`
 const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
   ${tw`pointer-events-none -z-20 absolute left-0 bottom-0 h-80 w-80 opacity-15 transform -translate-x-2/3 text-primary-500`}
 `;
+const ProgressContainer = styled.div`
+  width: 100%;
+  height: 10px;
 
+  margin-top: 10px;
+
+`;
+
+const Controls = tw.div`flex items-center`;
+const ControlButton = styled(PrimaryButtonBase)`
+  ${tw`mt-4 sm:mt-0 first:ml-0 ml-6 rounded-full p-2`}
+  svg {
+    ${tw`w-6 h-6`}
+  }
+`;
+const PrevButton = tw(ControlButton)``;
+const NextButton = tw(ControlButton)``;
+const Actions = styled.div`
+  ${tw`text-center `}
+  input {
+    ${tw`rounded-full border-2 w-full relative py-4 px-10 mt-6 font-medium focus:outline-none  hover:border-gray-500`}
+  }
+`;
+const Input = tw.input`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 first:mt-0`;
 export default ({ heading = 'All Training Contents' }) => {
   const [trainingContents, setTrainingContents] = useState([]);
   const token = useSelector((state) => state.auth.token);
-
+  const userId = useSelector((state) => state.auth.userId);
+  const [filteredResults, setFilteredResults] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(4);
+ 
   useEffect(() => {
     const fetchTrainingContents = async () => {
       if (token) {
@@ -73,6 +106,35 @@ export default ({ heading = 'All Training Contents' }) => {
     return new Date(dateString).toLocaleDateString('en-US', options);
   };
 
+
+  //////////////////// Pagination logic///////////////////
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const itemsToDisplay = searchInput.length > 1 ? filteredResults : trainingContents;
+  const currentItems = itemsToDisplay.slice(indexOfFirstItem, indexOfLastItem);
+  const pageNumbers = [];
+  for (let i = 1; i <= Math.ceil(itemsToDisplay.length / itemsPerPage); i++) {
+    pageNumbers.push(i);
+  }
+
+ 
+  const handlePrevClick = () => {
+    setCurrentPage((prevPage) => prevPage - 1);
+  };
+////////////////////Filter/////////////////////
+  const searchItems = (searchValue) => {
+    setSearchInput(searchValue);
+    if (searchValue !== '') {
+      const filteredData = trainingContents.filter((item) => {
+        return Object.values(item).join('').toLowerCase().includes(searchValue.toLowerCase());
+      });
+      setFilteredResults(filteredData);
+    } else {
+      setFilteredResults([]);
+    }
+    setCurrentPage(1); // Reset current page to first page after each search
+  };
+
   return (
     <>
       <AnimationRevealPage>
@@ -81,11 +143,32 @@ export default ({ heading = 'All Training Contents' }) => {
         <ContentWithPaddingXl>
           <HeaderRow>
             <Headers>{heading}</Headers>
+            
+            <div
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '20px',
+              }}
+            >
+          
+           <Controls>
+                  <PrevButton onClick={handlePrevClick} disabled={currentPage === 1}><ChevronLeftIcon /></PrevButton>
+                  <NextButton disabled={currentPage === pageNumbers.length} onClick={() => setCurrentPage(currentPage + 1)}><ChevronRightIcon /></NextButton>
+                </Controls>
+              </div>
+              <Actions>
+                <Input
+                  type="text"
+                  placeholder="Search"
+                  onChange={(e) => searchItems(e.target.value)}
+                />
+              </Actions>
           </HeaderRow>
           <TabContent>
-            {trainingContents.map((trainingContent) => (
-              <CardContainer key={trainingContent._id}>
-                <a href={`/TrainingDetails/${trainingContent._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          {currentItems.map((item) => (
+                <CardContainer key={item._id}>
+                <a href={`/TrainingDetails/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <Card
                     className="group"
                     initial="rest"
@@ -94,28 +177,32 @@ export default ({ heading = 'All Training Contents' }) => {
                     style={{ margin: '10px' }} // Add margin between the cards
                   >
                     <CardImageContainer
-                      imageSrc={trainingContent.image ? `http://localhost:5000/${trainingContent.image.replace(/\\/g, '/')}` : ''}
+                      imageSrc={item.image ? `http://localhost:5000/${item.image.replace(/\\/g, '/')}` : ''}
                     />
                     <CardText>
-                      <CardTitle>{trainingContent.title}</CardTitle>
+                      <CardTitle>{item.title}</CardTitle>
                       <CardInfo>
                         <IconWrapper><FiTag /></IconWrapper>
-                        <CardContent>{trainingContent.category}</CardContent>
+                        <CardContent>{item.category}</CardContent>
                       </CardInfo>
                       <CardInfo>
                         <IconWrapper><FiCheckCircle /></IconWrapper>
-                        <CardContent>Status: {trainingContent.status}</CardContent>
+                        <CardContent>Status: {item.status}</CardContent>
                       </CardInfo>
                       {/* <CardInfo>
                         <IconWrapper><FiCalendar /></IconWrapper>
                         <CardContent>Deadline: {formatDate(trainingContent.endDate)}</CardContent>
                       </CardInfo> */}
                     </CardText>
-                    <ProgressBar trainingId={trainingContent._id} />
+                
+                    {item.participants.includes(userId) ? (
+          <ProgressBar trainingId={item._id} />
+        ):(<ProgressContainer />)}
                   </Card>
+      
                 </a>
-              </CardContainer>
-            ))}
+              </CardContainer>  ))}
+         
           </TabContent>
         </ContentWithPaddingXl>
         <DecoratorBlob1 />

@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
-import {  useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Badge, Alert } from "react-bootstrap";
 
 const TrainingContentList = () => {
     const [trainingContents, setTrainingContents] = useState([]);
-    const [alertMessage, setAlertMessage] = useState(null); // Ajout de l'état pour gérer l'alerte
+    const [alertMessage, setAlertMessage] = useState(null);
     const token = useSelector((state) => state.auth.token);
+    const [filteredResults, setFilteredResults] = useState([]);
+    const [searchInput, setSearchInput] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
 
     useEffect(() => {
         const fetchTrainingContents = async () => {
@@ -22,7 +26,6 @@ const TrainingContentList = () => {
                 } catch (error) {
                     console.error('Error fetching training contents:', error);
                 }
-                
             }
         };
         fetchTrainingContents();
@@ -35,19 +38,12 @@ const TrainingContentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // Mettre à jour la liste après la suppression réussie
             setTrainingContents(trainingContents.filter(content => content._id !== id));
             setAlertMessage({ type: 'success', message: 'Training content supprimé avec succès!' });
-
-          
         } catch (error) {
             console.error('Error deleting training content:', error);
             setAlertMessage({ type: 'danger', message: 'Erreur lors de la suppression du contenu de formation!' });
-
-            
-        }
-        finally {
-            // Utiliser setTimeout une seule fois après chaque ajout ou suppression
+        } finally {
             setTimeout(() => {
                 setAlertMessage(null);
             }, 2000);
@@ -58,11 +54,36 @@ const TrainingContentList = () => {
         if (!dateString) {
             return "Not specific";
         }
-    
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('en-US', options);
     };
-    
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = Math.min(indexOfLastItem - itemsPerPage + 1, trainingContents.length);
+    const itemsToDisplay = searchInput.length > 1 ? filteredResults : trainingContents;
+    const currentItems = itemsToDisplay.slice(indexOfFirstItem - 1, indexOfLastItem);
+    const totalPages = Math.ceil(itemsToDisplay.length / itemsPerPage);
+
+    const handlePrevClick = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
+
+    const handleNextClick = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const searchItems = (searchValue) => {
+        setSearchInput(searchValue);
+        if (searchValue !== '') {
+            const filteredData = trainingContents.filter((item) => {
+                return Object.values(item).join('').toLowerCase().includes(searchValue.toLowerCase());
+            });
+            setFilteredResults(filteredData);
+        } else {
+            setFilteredResults([]);
+        }
+        setCurrentPage(1);
+    };
 
     return (
         <>
@@ -71,12 +92,44 @@ const TrainingContentList = () => {
                     {alertMessage.message}
                 </Alert>
             )}
-            <div className="d-flex align-items-center mb-4 flex-wrap">
+   {/* <div className="d-flex align-items-center mb-4 flex-wrap">
+    <h4 className="fs-20 font-w600 me-auto">Training Content List</h4>
+    <div className="input-group">
+        <input
+            type="text"
+            className="form-control"
+            placeholder="Search"
+            onChange={(e) => searchItems(e.target.value)}
+        />
+        <span className="input-group-text">
+            <i className="fas fa-search"></i>
+        </span>
+    </div>
+    <div>
+        <Link to="/new-training" className="btn btn-primary me-3 btn-sm">
+            <i className="fas fa-plus me-2"></i>Add New Training
+        </Link>
+    </div>
+</div> */}
+
+<div className="d-flex align-items-center mb-4 flex-wrap">
                 <h4 className="fs-20 font-w600 me-auto">Training Content List</h4>
-                <div>
+                <div className="">
+        <input
+            type="text"
+            className="form-control form-control-sm "
+            placeholder="Search"
+            onChange={(e) => searchItems(e.target.value)}
+        />
+        {/* <span className="input-group-text">
+            <i className="fas fa-search"></i>
+        </span> */}
+    </div>
+    <div>
                     <Link to="/new-training" className="btn btn-primary me-3 btn-sm"><i className="fas fa-plus me-2"></i>Add New Training</Link>
                 </div>
             </div>
+
             <div className="row">
                 <div className="col-xl-12">
                     <div className="table-responsive dataTables_wrapper" id="application-data">
@@ -92,15 +145,14 @@ const TrainingContentList = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {trainingContents.map((trainingContent) => (
-                                    <tr key={trainingContent._id}>
-                                        <td>{trainingContent.title}</td>
-                                        <td>{trainingContent.category}</td>
-                                        <td>{formatDate(trainingContent.endDate)}</td>
-                                        <td>{trainingContent.description.split(' ').slice(0, 7).join(' ')}{trainingContent.description.split(' ').length > 7 ? '...' : ''}</td>
-
+                                {currentItems.map((item) => (
+                                    <tr key={item._id}>
+                                        <td>{item.title}</td>
+                                        <td>{item.category}</td>
+                                        <td>{formatDate(item.endDate)}</td>
+                                        <td>{item.description.split(' ').slice(0, 7).join(' ')}{item.description.split(' ').length > 7 ? '...' : ''}</td>
                                         <td>
-                                            {trainingContent.status === 'available' ? (
+                                            {item.status === 'available' ? (
                                                 <Badge variant="success light">Available</Badge>
                                             ) : (
                                                 <Badge variant="danger light">Not Available</Badge>
@@ -108,10 +160,10 @@ const TrainingContentList = () => {
                                         </td>
                                         <td className="text-center">
                                             <div className="action-buttons justify-content-end">
-                                                <Link to={`/${trainingContent._id}/details-training`} className="btn btn-success light mr-2">
+                                                <Link to={`/${item._id}/details-training`} className="btn btn-success light mr-2">
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="svg-main-icon" width="24px" height="24px" viewBox="0 0 32 32" x="0px" y="0px"><g data-name="Layer 21"><path d="M29,14.47A15,15,0,0,0,3,14.47a3.07,3.07,0,0,0,0,3.06,15,15,0,0,0,26,0A3.07,3.07,0,0,0,29,14.47ZM16,21a5,5,0,1,1,5-5A5,5,0,0,1,16,21Z" fill="#000000" fillRule="nonzero"></path><circle cx="16" cy="16" r="3" fill="#000000" fillRule="nonzero"></circle></g></svg>
                                                 </Link>
-                                                <Link to={`/${trainingContent._id}/edit-training`}  className="btn btn-secondary light mr-2">
+                                                <Link to={`/${item._id}/edit-training`}  className="btn btn-secondary light mr-2">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
                                                         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
                                                             <rect x="0" y="0" width="24" height="24"></rect>
@@ -121,7 +173,7 @@ const TrainingContentList = () => {
                                                     </svg>
                                                 </Link>
                                                 <Link to={"#"} className="btn btn-danger light"
-                                                    onClick={() => handleDeleteTrainingContent(trainingContent._id)}
+                                                    onClick={() => handleDeleteTrainingContent(item._id)}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" viewBox="0 0 24 24" version="1.1" className="svg-main-icon">
                                                         <g stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
@@ -138,6 +190,26 @@ const TrainingContentList = () => {
                             </tbody>
                         </table>
                     </div>
+                </div>
+                <div className="d-flex align-items-center justify-content-between flex-wrap">
+                    <div className="sm-mb-0 mb-3">
+                        <h5 className="mb-0">Showing {indexOfFirstItem} to {Math.min(indexOfLastItem, filteredResults.length>0?filteredResults.length:trainingContents.length)} of {trainingContents.length} entries</h5>
+                    </div>
+                    <nav>
+                        <ul className="pagination pagination-circle">
+                            <li className="page-item page-indicator">
+                                <Link to={"#"} className="page-link" onClick={handlePrevClick} disabled={currentPage === 1}>Prev</Link>
+                            </li>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                    <Link to={"#"} className="page-link" onClick={() => setCurrentPage(i + 1)}>{i + 1}</Link>
+                                </li>
+                            ))}
+                            <li className="page-item page-indicator">
+                                <Link to={"#"} className="page-link" onClick={handleNextClick} disabled={currentPage === totalPages}>Next</Link>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </>
