@@ -9,8 +9,8 @@ const MediaItem = ({ mediaMaterial, onDelete, onEdit }) => {
       <td>{mediaMaterial.file.split('\\').pop().split('-').slice(1).join('-')}</td>
       <td className="text-center">
         <div className="justify-content-end">
-          <Link to={`/${mediaMaterial._id}/media-details`} className="btn btn-info shadow btn-xs sharp me-1">
-            <i className="fas fa-eye"></i>
+          <Link to={`/${mediaMaterial._id}/media-details`} className="btn btn-success shadow btn-xs sharp me-1">
+            <i className="fas fa-eye " style={{fontSize:13}}></i>
           </Link>
           <button onClick={onEdit} className="btn btn-primary shadow btn-xs sharp me-1">
             <i className="fas fa-pencil-alt"></i>

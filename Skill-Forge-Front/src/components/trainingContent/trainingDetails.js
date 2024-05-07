@@ -144,7 +144,7 @@ Participate in this training
           buttonRounded={false}
           textOnLeft={false}
         
-          imageSrc={trainingContent && trainingContent.image ? `http://localhost:5000/${trainingContent.image.replace(/\\/g, '/')}` : ''}
+          imageSrc={trainingContent && trainingContent.image ? `http://localhost:5000/${trainingContent.image.replace(/\\/g, '/')}` :   `http://localhost:5000/uploads//acte.jpg`}
           imageCss={imageCss}
           imageDecoratorBlob={true}
           imageDecoratorBlobCss={tw`left-1/2 -translate-x-1/2 md:w-32 md:h-32 opacity-25`}

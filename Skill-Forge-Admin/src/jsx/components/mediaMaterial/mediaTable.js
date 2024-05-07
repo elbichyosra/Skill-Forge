@@ -6,7 +6,8 @@ import { Badge, Alert } from "react-bootstrap";
 import MediaItem from './mediaItem';
 import Modal from './modal';
 import MediaForm from './mediaForm';
-import MediaTable from './medias';
+
+
 
 const MediaList = () => {
     const { trainingContentId } = useParams();
@@ -25,7 +26,10 @@ const MediaList = () => {
         file: null
     });
     const token = useSelector((state) => state.auth.token);
-
+    const [filteredResults, setFilteredResults] = useState([]);
+    const [searchInput, setSearchInput] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage, setItemsPerPage] = useState(5);
     useEffect(() => {
         const fetchMediaMaterials = async () => {
             if (token && trainingContentId) {
@@ -165,7 +169,32 @@ const MediaList = () => {
             file: e.target.files[0]
         });
     };
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = Math.min(indexOfLastItem - itemsPerPage + 1, mediaMaterials.length);
+    const itemsToDisplay = searchInput.length > 1 ? filteredResults : mediaMaterials;
+    const currentItems = itemsToDisplay.slice(indexOfFirstItem - 1, indexOfLastItem);
+    const totalPages = Math.ceil(itemsToDisplay.length / itemsPerPage);
 
+    const handlePrevClick = () => {
+        setCurrentPage((prevPage) => Math.max(prevPage - 1, 1));
+    };
+
+    const handleNextClick = () => {
+        setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
+    };
+
+    const searchItems = (searchValue) => {
+        setSearchInput(searchValue);
+        if (searchValue !== '') {
+            const filteredData = mediaMaterials.filter((item) => {
+                return Object.values(item).join('').toLowerCase().includes(searchValue.toLowerCase());
+            });
+            setFilteredResults(filteredData);
+        } else {
+            setFilteredResults([]);
+        }
+        setCurrentPage(1);
+    };
     return (
         <>
             {alertMessage && (
@@ -173,14 +202,34 @@ const MediaList = () => {
                     {alertMessage.message}
                 </Alert>
             )}
-            <div className="col-12">
-                <div className="card">
-                    <div className="card-header">
-                        <h4 className="card-title">Media Material List</h4>
-                        <Link to={"#"} className="btn btn-primary me-3 btn-sm" onClick={() => setAddCard(true)}>
+             <div className="d-flex align-items-center mb-4 flex-wrap justify-content-between">
+        <h4 className="fs-20 font-w600">Training Content List</h4>
+
+        <div className="d-flex justify-content-center w-70"> 
+          <div className="nav-item d-flex align-items-center ml-3">
+            <div className="col-md-4 input-group search-area">
+              <input type="text" 
+                className="form-control" 
+                placeholder="Search"
+                style={{width: '250px'}} 
+                onChange={(e) => searchItems(e.target.value)}
+              />
+              <span className="input-group-text" >
+               <i className="flaticon-381-search-2"></i>
+              </span>
+            </div>
+          </div>
+        </div>  
+
+        <div>
+        <Link to={"#"} className="btn btn-primary me-3 btn-sm" onClick={() => setAddCard(true)}>
                             <i className="fas fa-plus me-2"></i>Add New Media 
                         </Link>
-                    </div>
+        </div>
+      </div>
+            <div className="col-12">
+                <div className="card">
+                  
                     <div>
                         <Modal show={addCard} onHide={() => setAddCard(false)} title="Add" onSubmit={handleAddFormSubmit}>
                             <MediaForm values={newMediaMaterial} onChange={handleAddFormChange} handleFile={handleFileChange} />
@@ -190,12 +239,55 @@ const MediaList = () => {
                         </Modal>
                     </div>
                     <div className="card-body">
-                        <MediaTable
+                        {/* <MediaTable
                             mediaMaterials={mediaMaterials}
                             onDelete={handleDeleteMediaMaterial}
                             onEdit={handleEditModal}
-                        />
+                        /> */}
+                         <div className="w-100 table-responsive">
+      <table id="example" className="display w-100 dataTable">
+        <thead>
+          <tr role="row">
+            <th>Title</th>
+            <th>Description</th>
+            <th>File</th>
+            <th className="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+        {currentItems.map((item) => (
+            <MediaItem
+              key={item._id}
+              mediaMaterial={item}
+              onDelete={() => handleDeleteMediaMaterial(item._id)}
+              onEdit={() => handleEditModal(item._id)}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
                     </div>
+                
+                </div>
+                <div className="d-flex align-items-center justify-content-between flex-wrap">
+                    <div className="sm-mb-0 mb-3">
+                        <h5 className="mb-0">Showing {indexOfFirstItem} to {Math.min(indexOfLastItem, filteredResults.length>0?filteredResults.length:mediaMaterials.length)} of {mediaMaterials.length} entries</h5>
+                    </div>
+                    <nav>
+                        <ul className="pagination pagination-circle">
+                            <li className="page-item page-indicator">
+                                <Link to={"#"} className="page-link" onClick={handlePrevClick} disabled={currentPage === 1}>Prev</Link>
+                            </li>
+                            {Array.from({ length: totalPages }, (_, i) => (
+                                <li key={i} className={`page-item ${currentPage === i + 1 ? 'active' : ''}`}>
+                                    <Link to={"#"} className="page-link" onClick={() => setCurrentPage(i + 1)}>{i + 1}</Link>
+                                </li>
+                            ))}
+                            <li className="page-item page-indicator">
+                                <Link to={"#"} className="page-link" onClick={handleNextClick} disabled={currentPage === totalPages}>Next</Link>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
             </div>
         </>

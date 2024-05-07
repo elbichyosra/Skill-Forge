@@ -92,43 +92,33 @@ const TrainingContentList = () => {
                     {alertMessage.message}
                 </Alert>
             )}
-   {/* <div className="d-flex align-items-center mb-4 flex-wrap">
-    <h4 className="fs-20 font-w600 me-auto">Training Content List</h4>
-    <div className="input-group">
-        <input
-            type="text"
-            className="form-control"
-            placeholder="Search"
-            onChange={(e) => searchItems(e.target.value)}
-        />
-        <span className="input-group-text">
-            <i className="fas fa-search"></i>
-        </span>
-    </div>
-    <div>
-        <Link to="/new-training" className="btn btn-primary me-3 btn-sm">
-            <i className="fas fa-plus me-2"></i>Add New Training
-        </Link>
-    </div>
-</div> */}
 
-<div className="d-flex align-items-center mb-4 flex-wrap">
-                <h4 className="fs-20 font-w600 me-auto">Training Content List</h4>
-                <div className="">
-        <input
-            type="text"
-            className="form-control form-control-sm "
-            placeholder="Search"
-            onChange={(e) => searchItems(e.target.value)}
-        />
-        {/* <span className="input-group-text">
-            <i className="fas fa-search"></i>
-        </span> */}
-    </div>
-    <div>
-                    <Link to="/new-training" className="btn btn-primary me-3 btn-sm"><i className="fas fa-plus me-2"></i>Add New Training</Link>
-                </div>
+
+<div className="d-flex align-items-center mb-4 flex-wrap justify-content-between">
+        <h4 className="fs-20 font-w600">Training Content List</h4>
+
+        <div className="d-flex justify-content-center w-70"> 
+          <div className="nav-item d-flex align-items-center ml-3">
+            <div className="col-md-4 input-group search-area">
+              <input type="text" 
+                className="form-control" 
+                placeholder="Search"
+                style={{width: '250px'}} 
+                onChange={(e) => searchItems(e.target.value)}
+              />
+              <span className="input-group-text" >
+               <i className="flaticon-381-search-2"></i>
+              </span>
             </div>
+          </div>
+        </div>  
+
+        <div>
+          <Link to="/new-training" className="btn btn-primary me-3 btn-sm">
+            <i className="fas fa-plus me-2"></i>Add New Training
+          </Link>
+        </div>
+      </div>
 
             <div className="row">
                 <div className="col-xl-12">

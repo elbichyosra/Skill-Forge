@@ -64,7 +64,10 @@ const NextButton = tw(ControlButton)``;
 const Actions = styled.div`
   ${tw`text-center `}
   input {
-    ${tw`rounded-full border-2 w-full relative py-4 px-10 mt-6 font-medium focus:outline-none  hover:border-gray-500`}
+    ${tw`rounded-full border-2 w-full relative py-3 px-10 mt-6 font-medium focus:outline-none hover:border-gray-500`}
+  }
+  @media (max-width: 768px) {
+    ${tw`mt-4`}
   }
 `;
 const Input = tw.input`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 first:mt-0`;
@@ -172,7 +175,7 @@ export default ({ heading = 'Assigned Training Contents' }) => {
                     style={{ margin: '10px' }} 
                   >
                     <CardImageContainer
-                      imageSrc={item.image ? `http://localhost:5000/${item.image.replace(/\\/g, '/')}` : ''}
+                      imageSrc={item.image ? `http://localhost:5000/${item.image.replace(/\\/g, '/')}` :   `http://localhost:5000/uploads//acte.jpg`}
                     />
                     <CardText>
                       <CardTitle>{item.title}</CardTitle>

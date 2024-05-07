@@ -14,6 +14,7 @@ const trainingContentSchema = new Schema({
     participants: [{ type:String}],
     assignedUsers: [{ type:String}],
     userProgress: { type: Map, of: Number, default: {} },
+    comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 },
 {
   timestamps: true,
