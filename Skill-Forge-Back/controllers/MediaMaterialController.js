@@ -134,6 +134,8 @@ exports.update = async (req, res) => {
 // Supprimer un mediaMaterial
 exports.delete = async (req, res) => {
   try {
+     // Retirer le commentaire de la liste des commentaires dans le contenu de formation associé
+     await TrainingContent.findByIdAndUpdate(mediaMaterial.trainingContent, { $pull: { mediaMaterials: req.params.id } });
     const mediaMaterial = await MediaMaterials.findByIdAndDelete(req.params.id);
     if (!mediaMaterial) {
       return res.status(404).json({ error: 'Media Material non trouvé' });
