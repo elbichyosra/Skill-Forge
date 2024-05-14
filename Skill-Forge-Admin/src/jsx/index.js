@@ -62,6 +62,7 @@ import AddTrainingContent from "./components/trainingContent/addTrainingContent"
 import EditTrainingContent from "./components/trainingContent/editTrainingContent";
 import DetailsTrainingContent from "./components/trainingContent/trainingContentDetails";
 import AssignTrainingContent from "./components/trainingContent/assignTrainingContent";
+import UserProgressList from "./components/trainingContent/userProgressList";
 //Media 
 import MediaTable from"./components/mediaMaterial/mediaTable";
 import MediaDetails from "./components/mediaMaterial/mediaDetails";
@@ -123,6 +124,7 @@ const Markup = () => {
     { url: ':id/edit-training', component: EditTrainingContent },
     { url: ':id/details-training', component: DetailsTrainingContent },
     { url: 'assign-training', component: AssignTrainingContent },
+    { url: 'users-progress', component: UserProgressList},
     //media Material
     { url: ':trainingContentId/media-table', component: MediaTable },
     { url: ':id/media-details', component: MediaDetails},

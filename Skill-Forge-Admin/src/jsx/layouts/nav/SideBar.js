@@ -97,7 +97,8 @@ const SideBar = () => {
 	],
 	content= [
 		"training-table",
-    "assign-training"
+    "assign-training",
+    "users-progress",
 	
 	];
    
@@ -217,6 +218,7 @@ const SideBar = () => {
             <ul >
 					<li><Link className={`${path === "training-table" ? "mm-active" : ""}`} to="/training-table">Training List</Link></li>
           <li><Link className={`${path === "assign-training" ? "mm-active" : ""}`} to="/assign-training">Assign Training</Link></li>
+          <li><Link className={`${path === "users-progress" ? "mm-active" : ""}`} to="/users-progress">Unfinished Training Participants</Link></li>
           </ul>
             </li>
          

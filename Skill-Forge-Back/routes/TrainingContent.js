@@ -26,4 +26,6 @@ router.get('/assigned/:userId',keycloak.protect(),trainingContentController.getA
 router.put('/progress/:trainingId/:userId', keycloak.protect(),trainingContentController.updateProgress);
 // Route pour enregistrer la participation à l'entraînement
 router.post('/participate/:trainingId/:userId', keycloak.protect(),trainingContentController.participateInTraining);
+//Route pour Envoyer un email
+router.post('/reminder', keycloak.protect('backoffice:admin'),trainingContentController.emailReminder);
 module.exports = router;

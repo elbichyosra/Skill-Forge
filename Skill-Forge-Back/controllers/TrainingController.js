@@ -214,7 +214,7 @@ exports.updateProgress = async (req, res) => {
         return material.checkedByUser.some(user => user.userId === userId && user.isChecked);
       });
      
-      const progress = (mediaMaterialsCheckedByUser.length / training.mediaMaterials.length) * 100;
+      const progress = Math.ceil((mediaMaterialsCheckedByUser.length / training.mediaMaterials.length) * 100);
     
   
       // Mettre à jour le progrès de l'utilisateur dans cet training
@@ -255,5 +255,39 @@ exports.participateInTraining = async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Erreur lors de l'enregistrement de la participation." });
+    }
+};
+
+exports.emailReminder = async (req, res) => {
+    try {
+        const { trainingId, userId, userName, email } = req.body;
+
+        // Fetch the training content by its ID
+        const trainingContent = await TrainingContent.findById(trainingId);
+        if (!trainingContent) {
+            return res.status(404).json({ message: 'Training content not found' });
+        }
+
+        // Check if the user with the specified ID is already assigned to the training content
+        if (!trainingContent.assignedUsers.includes(userId)) {
+            return res.status(400).json({ message: 'User Not assigned to this training content' });
+        }
+
+        // Define the data to be inserted into the template
+        const templateData = {
+            userName,
+            trainingTitle: trainingContent.title,
+            trainingDeadline: new Date(trainingContent.endDate).toLocaleString('fr-FR', { year: 'numeric', month: 'short', day: '2-digit' }),
+            // Add more data fields as needed
+        };
+
+        // Send the email
+        await SendMail(email, "Reminder for Assigned Training", templateData);
+
+        // Send a success response
+        return res.status(200).json({ message: 'Email sent successfully', trainingContent });
+    } catch (error) {
+        console.error('Error sending email', error);
+        return res.status(500).json({ message: 'Error sending email' });
     }
 };

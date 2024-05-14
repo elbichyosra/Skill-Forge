@@ -203,7 +203,7 @@ const MediaList = () => {
                 </Alert>
             )}
              <div className="d-flex align-items-center mb-4 flex-wrap justify-content-between">
-        <h4 className="fs-20 font-w600">Training Content List</h4>
+        <h4 className="fs-20 font-w600">Medias List</h4>
 
         <div className="d-flex justify-content-center w-70"> 
           <div className="nav-item d-flex align-items-center ml-3">

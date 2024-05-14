@@ -15,7 +15,7 @@ const EditTrainingContent = () => {
         description: '',
         category: '',
         status: 'available',
-        endDate: '',
+        endDate: null,
         image: null
     });
     const [alertMessage, setAlertMessage] = useState(null);
@@ -57,19 +57,24 @@ const EditTrainingContent = () => {
 
         try {
              // Vérifier si la date de fin est supérieure à la date système
-          const endDate = new Date(formData.endDate);
-          const currentDate = new Date();
-  
-          if (endDate <= currentDate) {
-          setAlertMessage({ type: 'danger', message: 'End date must be greater than the current system date!' });
-          return;
-          }
+             if (formData.endDate !== null) {
+                const endDate = new Date(formData.endDate);
+                const currentDate = new Date();
+    
+                if (endDate <= currentDate) {
+                    setAlertMessage({ type: 'danger', message: 'End date must be greater than the current system date!' });
+                    return;
+                }
+            }
+          
             const formDataToSend = new FormData();
             formDataToSend.append('title', formData.title);
             formDataToSend.append('description', formData.description);
             formDataToSend.append('category', formData.category);
             formDataToSend.append('status', formData.status);
-            formDataToSend.append('endDate', formData.endDate);
+            if (formData.endDate !== null) {
+                formDataToSend.append('endDate', formData.endDate);
+            }
             formDataToSend.append('image', formData.image);
 
             const response = await axios.put(`http://localhost:5000/trainingContent/${id}`, formDataToSend, {

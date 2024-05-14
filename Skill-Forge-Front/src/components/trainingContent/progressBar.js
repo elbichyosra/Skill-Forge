@@ -44,12 +44,7 @@ const ProgressBar = ({ trainingId}) => {
 
   // Affichage de la barre de progression
   return (
-    // <div>
-    //   <p>Progression : {progress}%</p>
-    //   <div style={{ width: '100%', backgroundColor: '#ccc', height: '20px', borderRadius: '10px' }}>
-    //     <div style={{ width: `${progress}%`, backgroundColor: 'blue', height: '100%', borderRadius: '10px' }}></div>
-    //   </div>
-    // </div>
+  
     <ProgressContainer>
     <Bar progress={progress} />
   </ProgressContainer>

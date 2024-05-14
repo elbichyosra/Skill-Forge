@@ -57,6 +57,7 @@ const TrainingContentList = () => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('en-US', options);
     };
+    /////////////////////////Pagination/////////////////////////////
 
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = Math.min(indexOfLastItem - itemsPerPage + 1, trainingContents.length);
@@ -71,7 +72,7 @@ const TrainingContentList = () => {
     const handleNextClick = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
-
+///////////////////////Filter////////////////////////////
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
         if (searchValue !== '') {

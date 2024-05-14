@@ -8,6 +8,7 @@ const mediaMaterialRoutes=require('./routes/MediaMaterials')
 const session = require('express-session');
 const commentRoutes=require('./routes/Comments')
 const { keycloak, sessionStore } = require('./config/keycloak');
+const notificationRoutes=require('./routes/Notification')
 // Connexion à la base de données
 mongoose.connect(process.env.mongo_uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("DB connected"))
@@ -38,6 +39,7 @@ app.use("/uploads", express.static("uploads"));
 app.use('/trainingContent', trainingContentRoutes);
 app.use('/mediaMaterial', mediaMaterialRoutes);
 app.use('/comment', commentRoutes);
+app.use('/notification', notificationRoutes);
 // Gestion des erreurs 404 (route non trouvée)
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
