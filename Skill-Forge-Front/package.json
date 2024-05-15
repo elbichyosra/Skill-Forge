@@ -10,6 +10,7 @@
     "@testing-library/user-event": "^14.4.3",
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "feather-icons": "^4.29.0",
     "framer-motion": "^7.3.2",

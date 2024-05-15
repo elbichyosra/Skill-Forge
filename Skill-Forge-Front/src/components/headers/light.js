@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
@@ -11,7 +11,8 @@ import { ReactComponent as MenuIcon } from "feather-icons/dist/icons/menu.svg";
 import { ReactComponent as CloseIcon } from "feather-icons/dist/icons/x.svg";
 import useAuth from "../../hooks/useAuth";
 import Notifications from "./notifications.js";
-
+import { useSelector } from 'react-redux';
+import axios from 'axios';
 const Header = tw.header`
   flex justify-between items-center
   max-w-screen-xl mx-auto
@@ -59,6 +60,29 @@ export const DesktopNavLinks = tw.nav`
 export default ({ roundedHeaderButton = false, logoLink, links, className, collapseBreakpointClass = "lg" }) => {
   const [isLogin, token, logout, userName] = useAuth();
   const profileUrl = `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${process.env.REACT_APP_KEYCLOAK_REALM}/account`;
+  // const [notifications, setNotifications] = useState([]);
+  // const [isLoading, setIsLoading] = useState(true);
+
+  const userId = useSelector((state) => state.auth.userId);
+  useEffect(() => {
+    const sendReminders = async () => {
+      try {
+      const response = await axios.post(`http://localhost:5000/notification/${userId}`);
+      // if (response.data.length > 0 &&response.message!= "No reminders to send") {
+      //   console.log(response)
+      //     setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
+       
+      //     setIsLoading(false);
+      //   }
+          
+          } catch (error) {
+          console.error('Error sending reminders:', error);
+          return { error: 'Failed to send reminders' };
+      }
+      };
+      sendReminders();
+}, [userId]);
+
 
   const defaultLinks = [
     <NavLinks key={1}>
@@ -94,13 +118,13 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
       <DesktopNavLinks css={collapseBreakpointCss.desktopNavLinks}>
         {logoLink}
         {links}
-        <Notifications />
+        <Notifications  />
       </DesktopNavLinks>
 
       <MobileNavLinksContainer css={collapseBreakpointCss.mobileNavLinksContainer}>
         {logoLink}
         <div tw="flex items-center">
-          <Notifications />
+          <Notifications  />
           <NavToggle onClick={toggleNavbar} className={showNavLinks ? "open" : "closed"} tw="ml-4" >
             {showNavLinks ? <CloseIcon tw="w-6 h-6" /> : <MenuIcon tw="w-6 h-6" />}
           </NavToggle>

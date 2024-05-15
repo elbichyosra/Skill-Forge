@@ -47,13 +47,15 @@ exports.sendReminders = async (req, res) => {
                     if (trainingContent.assignedUsers.includes(userId)) {
                         const progress = trainingContent.userProgress.get(userId) || 0;
                         if (progress < 100) {
-                            const message = `Reminder: Incomplete training "${trainingContent.title}"`;
+                            const message = `Incomplete training "${trainingContent.title}"`;
                             const existingNotification = await Notification.findOne({ userId, message });
-console.log(existingNotification);
+                          
                             if (existingNotification==null) {
                                 const notification = await createNotification(userId, message);
                                 notifications.push(notification);
+
                             }
+                            
                         }
                     }
                 }
@@ -66,3 +68,15 @@ console.log(existingNotification);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+// Mark notifications as read
+exports.markNotificationsAsRead = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      await Notification.updateMany({ userId, read: false }, { read: true });
+      res.status(200).json({ message: 'Notifications marked as read' });
+    } catch (error) {
+      console.error('Error marking notifications as read:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };

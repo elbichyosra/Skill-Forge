@@ -5,7 +5,11 @@ const notificationSchema = new Schema({
     id: mongoose.Schema.Types.ObjectId,
     userId: { type: String, required: true },
     message: { type: String, required: true },
-    // createdAt: { type: Date, default: Date.now }
+    
+    read: { type: Boolean, default: false },
+},
+{
+    timestamps: true,
 }
 );
 
