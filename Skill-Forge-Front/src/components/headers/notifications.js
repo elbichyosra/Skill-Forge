@@ -8,13 +8,13 @@ import { formatDistanceToNow } from 'date-fns';
 
 const NotificationIcon = styled.div`
   ${tw`relative cursor-pointer hocus:text-primary-500`}
-  width: 25px;  // Increase width
-  height: 25px; // Increase height
+  width: 25px;
+  height: 25px;
 `;
 
 const BellIconStyled = styled(BellIcon)`
-  width: 100%;  // Make the BellIcon take the full size of NotificationIcon
-  height: 100%; // Make the BellIcon take the full size of NotificationIcon
+  width: 100%;
+  height: 100%;
 `;
 
 const NotificationDropdown = styled.div`
@@ -54,32 +54,30 @@ const Notifications = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isOpen, setIsOpen] = useState(false);
   const [showAll, setShowAll] = useState(false);
-  const [unreadCount, setUnreadCount] = useState(0); // Initialize unread count to 0
+  const [unreadCount, setUnreadCount] = useState(0);
   const userId = useSelector((state) => state.auth.userId);
   const dropdownRef = useRef(null);
 
-  const fetchNotifications = async () => {
-    try {
-      const response = await axios.get(`http://localhost:5000/notification/${userId}`);
-      setNotifications(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching notifications:', error);
-    }
-  };
-
   useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/notification/${userId}`);
+        setNotifications(response.data);
+        setIsLoading(false);
+      
+      } catch (error) {
+        console.error('Error fetching notifications:', error);
+      }
+    };
+
     if (userId) {
       fetchNotifications();
     }
   }, [userId,notifications]);
 
   useEffect(() => {
-    // Update unread count when notifications change
-    if (notifications.length > 0) {
-      const unreadCount = notifications.filter(notification => !notification.read).length;
-      setUnreadCount(unreadCount);
-    }
+    const unreadCount = notifications.filter((notification) => !notification.read).length;
+    setUnreadCount(unreadCount);
   }, [notifications]);
 
   const handleClickOutside = (event) => {
@@ -103,7 +101,6 @@ const Notifications = () => {
   const toggleDropdown = async () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
-      // Reset unread count and mark all notifications as read
       try {
         await axios.put(`http://localhost:5000/notification/${userId}/markAsRead`);
         setNotifications(notifications.map((notif) => ({ ...notif, read: true })));

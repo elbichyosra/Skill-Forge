@@ -19,7 +19,7 @@ exports.getNotificationsByUserId = async (req, res) => {
 
 
 // Create notification
-const createNotification = async (userId, message) => {
+exports.createNotification = async (userId, message) => {
     try {
         const notification = new Notification({ userId, message });
         await notification.save();
@@ -51,7 +51,7 @@ exports.sendReminders = async (req, res) => {
                             const existingNotification = await Notification.findOne({ userId, message });
                           
                             if (existingNotification==null) {
-                                const notification = await createNotification(userId, message);
+                                const notification = await exports.createNotification(userId, message);
                                 notifications.push(notification);
 
                             }

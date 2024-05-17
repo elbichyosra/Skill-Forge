@@ -2,7 +2,7 @@ const TrainingContent = require('../models/trainingContent');
 const axios = require('axios');
 const fs = require('fs');
 const handlebars = require('handlebars');
-
+const {createNotification}=require('./notitficationController')
 const SendMail= require('./SendMail');
 // Créer un nouveau trainingContent
 exports.createTrainingContent = async (req, res) => {
@@ -152,7 +152,9 @@ exports.assignTrainingContentToUser = async (req, res) => {
         await trainingContent.save();
 
         console.log('Training content assigned successfully to user:', trainingContent);
-
+        // Create a notification for the user
+           const notificationMessage = `You have been assigned to the training "${trainingContent.title}"`;
+           await createNotification(userId, notificationMessage);
      // Define the data to be inserted into the template
         const templateData = {
             userName,

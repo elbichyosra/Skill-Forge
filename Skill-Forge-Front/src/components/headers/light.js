@@ -60,29 +60,47 @@ export const DesktopNavLinks = tw.nav`
 export default ({ roundedHeaderButton = false, logoLink, links, className, collapseBreakpointClass = "lg" }) => {
   const [isLogin, token, logout, userName] = useAuth();
   const profileUrl = `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${process.env.REACT_APP_KEYCLOAK_REALM}/account`;
-  // const [notifications, setNotifications] = useState([]);
-  // const [isLoading, setIsLoading] = useState(true);
+  const [notifications, setNotifications] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const userId = useSelector((state) => state.auth.userId);
-  useEffect(() => {
+ 
     const sendReminders = async () => {
       try {
       const response = await axios.post(`http://localhost:5000/notification/${userId}`);
-      // if (response.data.length > 0 &&response.message!= "No reminders to send") {
-      //   console.log(response)
+      // if (response.data.length > 0 ) {
+      // //   console.log(response)
       //     setNotifications((prevNotifications) => [...prevNotifications, ...response.data]);
        
+      // //  setNotifications(response.data)
       //     setIsLoading(false);
       //   }
-          
+      
           } catch (error) {
           console.error('Error sending reminders:', error);
           return { error: 'Failed to send reminders' };
       }
       };
+
+      useEffect(() => {
+      if(userId){
       sendReminders();
+   
+    
+    }
+
+
 }, [userId]);
 
+useEffect(() => {
+  if (userId) {
+     // Set up interval to refresh notifications every 30 seconds
+     const intervalId = setInterval(sendReminders, 1000);
+
+     // Clean up interval on unmount
+     return () => clearInterval(intervalId);
+  }
+}, [userId]);
 
   const defaultLinks = [
     <NavLinks key={1}>
