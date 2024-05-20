@@ -66,6 +66,8 @@ import UserProgressList from "./components/trainingContent/userProgressList";
 //Media 
 import MediaTable from"./components/mediaMaterial/mediaTable";
 import MediaDetails from "./components/mediaMaterial/mediaDetails";
+//evaluation
+import QuizTable from "./components/evaluation/quizTable";
 import { ThemeContext } from "../context/ThemeContext";
 
 
@@ -128,6 +130,8 @@ const Markup = () => {
     //media Material
     { url: ':trainingContentId/media-table', component: MediaTable },
     { url: ':id/media-details', component: MediaDetails},
+    // evaluation
+    { url: 'quizzes-table', component: QuizTable },
   ];
   let path = window.location.pathname;
   path = path.split("/");

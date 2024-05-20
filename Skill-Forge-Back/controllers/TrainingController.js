@@ -4,6 +4,7 @@ const fs = require('fs');
 const handlebars = require('handlebars');
 const {createNotification}=require('./notitficationController')
 const SendMail= require('./SendMail');
+const Quiz = require('../models/quiz');
 // Créer un nouveau trainingContent
 exports.createTrainingContent = async (req, res) => {
     try {
@@ -100,34 +101,6 @@ exports.deleteTrainingContent = async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 };
-// // Assign training content to user
-// exports.assignTrainingContentToUser = async (req, res) => {
-//     try {
-//         const { trainingId, userId } = req.params;
-        
-//         // Fetch the training content by its ID
-//         const trainingContent = await TrainingContent.findById(trainingId);
-//         if (!trainingContent) {
-//             return res.status(404).json({ message: 'Training content not found' });
-//         }
-      
-//         // Check if the user with the specified ID is already assigned to the training content
-//         if (trainingContent.assignedUsers.includes(userId)) {
-//             return res.status(400).json({ message: 'User already assigned to this training content' });
-//         }
-      
-//         // Update the training content document to include the assigned user
-//         trainingContent.assignedUsers.push(userId);
-//         await trainingContent.save();
-
-      
-//         return res.status(200).json(trainingContent);
-//     } catch (error) {
-//         console.error('Error assigning training content:', error);
-//         return res.status(500).json({ message: 'Error assigning training content' });
-//     }
-// };
-
 
 
 
@@ -293,3 +266,24 @@ exports.emailReminder = async (req, res) => {
         return res.status(500).json({ message: 'Error sending email' });
     }
 };
+
+// Assign quiz to training content
+exports.assignQuizToTrainingContent = async (req, res) => {
+    try {
+        const { trainingContentId, quizId } = req.body;
+        const trainingContent = await TrainingContent.findById(trainingContentId);
+        if (!trainingContent) {
+            return res.status(404).json({ message: "Training content not found" });
+        }
+        const quiz = await Quiz.findById(quizId);
+        if (!quiz) {
+            return res.status(404).json({ message: "Quiz not found" });
+        }
+        trainingContent.quiz = quizId;
+        await trainingContent.save();
+        res.status(200).json(trainingContent);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+

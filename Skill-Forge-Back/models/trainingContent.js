@@ -15,6 +15,7 @@ const trainingContentSchema = new Schema({
     assignedUsers: [{ type:String}],
     userProgress: { type: Map, of: Number, default: {} },
     comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
+    quiz: { type: Schema.Types.ObjectId, ref: "Quiz" },
 },
 {
   timestamps: true,
