@@ -68,6 +68,8 @@ import MediaTable from"./components/mediaMaterial/mediaTable";
 import MediaDetails from "./components/mediaMaterial/mediaDetails";
 //evaluation
 import QuizTable from "./components/evaluation/quizTable";
+import AddQuiz from "./components/evaluation/addQuiz";
+import EditQuiz from "./components/evaluation/editQuiz";
 import { ThemeContext } from "../context/ThemeContext";
 
 
@@ -132,6 +134,8 @@ const Markup = () => {
     { url: ':id/media-details', component: MediaDetails},
     // evaluation
     { url: 'quizzes-table', component: QuizTable },
+    { url: 'quiz-form', component: AddQuiz },
+    { url: ':id/edit-quiz', component: EditQuiz },
   ];
   let path = window.location.pathname;
   path = path.split("/");

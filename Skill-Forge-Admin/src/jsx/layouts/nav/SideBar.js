@@ -100,8 +100,12 @@ const SideBar = () => {
     "assign-training",
     "users-progress",
 	
+	],
+  evaluation= [
+		"quizzes-table",
+  
+	
 	];
-   
    
     const profileUrl = `${process.env.REACT_APP_KEYCLOAK_URL}/realms/${process.env.REACT_APP_KEYCLOAK_REALM}/account`;
     
@@ -221,7 +225,16 @@ const SideBar = () => {
           <li><Link className={`${path === "users-progress" ? "mm-active" : ""}`} to="/users-progress">Unfinished Training Participants</Link></li>
           </ul>
             </li>
-         
+            <li className={`${evaluation.includes(path) ? "mm-active" : ""}`}>
+      <Link className="has-arrow" to="#"  >
+      <i className="flaticon-093-waving"></i>
+              <span className="nav-text">Evaluation</span>
+            </Link>
+            <ul >
+					<li><Link className={`${path === "training-table" ? "mm-active" : ""}`} to="/quizzes-table">Quizzes</Link></li>
+
+          </ul>
+            </li>
           
          
 			

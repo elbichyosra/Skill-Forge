@@ -76,8 +76,11 @@ const AssignTrainingContent = () => {
                 setSelectedTraining(null);
             })
             .catch(error => {console.error('Error assigning training content:', error);
+         
+                setAlertMessage({ type: 'danger', message: error.response.data.message || 'Error assigning training content. Please try again later.' })
+     } )
 
-            setAlertMessage({ type: 'danger', message: 'Error assigning training content. Please try again later.'});})
+            // setAlertMessage({ type: 'danger', message: 'Error assigning training content. Please try again later.'});})
             .finally(()=> setTimeout(() => {
               setAlertMessage(null);
           }, 2000));

@@ -1,8 +1,10 @@
+// QuizTable.js
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from "react-redux";
 import { Badge, Alert } from "react-bootstrap";
+import Modal from './quizDetailsModal';  // Assurez-vous d'importer votre composant Modal
 
 const QuizTable = () => {
     const [quizzes, setQuizzes] = useState([]);
@@ -10,11 +12,13 @@ const QuizTable = () => {
     const [error, setError] = useState(null);
     const token = useSelector((state) => state.auth.token);
     const [alertMessage, setAlertMessage] = useState(null);
-    
     const [filteredResults, setFilteredResults] = useState([]);
     const [searchInput, setSearchInput] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(5);
+
+    const [showModal, setShowModal] = useState(false);
+    const [selectedQuiz, setSelectedQuiz] = useState(null);
 
     const fetchQuizzes = async () => {
         if (token) {
@@ -44,22 +48,23 @@ const QuizTable = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // After successful deletion, fetch quizzes again to update the list
             setQuizzes(quizzes.filter(content => content._id !== id));
             setAlertMessage({ type: 'success', message: 'Quiz was deleting successfuly!' });
         } catch (error) {
             console.error("Error deleting quiz:", error);
             setAlertMessage({ type: 'danger', message: 'Error deleting quiz!' });
-        }
-     
-        finally {
+        } finally {
             setTimeout(() => {
                 setAlertMessage(null);
             }, 2000);
         }
     };
 
-    /////////////////////////Pagination/////////////////////////////
+    const handleShowDetails = (quiz) => {
+        setSelectedQuiz(quiz);
+        setShowModal(true);
+    };
+
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = Math.min(indexOfLastItem - itemsPerPage + 1, quizzes.length);
     const itemsToDisplay = searchInput.length > 1 ? filteredResults : quizzes;
@@ -74,7 +79,6 @@ const QuizTable = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
 
-    ///////////////////////Filter////////////////////////////
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
         if (searchValue !== '') {
@@ -100,47 +104,45 @@ const QuizTable = () => {
         <>
             <style>
                 {`
-             .table-responsive {
-                overflow-x: auto;
-            }
-            
-            .table th, .table td {
-                vertical-align: middle;
-                text-align: center;
-            }
-            
-            .table th {
-                width: auto;
-                white-space: nowrap;
-            }
-            
-            .table td {
-                white-space: nowrap;
-            }
-            
-            .dataTablesCard {
-                width: 100%;
-                margin: 0 auto;
-            }
-            
-            .dataTables_wrapper {
-                width: 100%;
-                margin: 0;
-            }
-            /* Custom styling for check and trash icons */
-            .fas.fa-check {
-                color: #43dac1; /* Success green */
-            }
-            .fas.fa-check:hover {
-                color: lightgreen; /* Lighter green on hover */
-            }
-            .far.fa-trash-alt {
-                color: #dc3545; /* Primary red */
-            }
-            .far.fa-trash-alt:hover {
-                color: red; /* Red on hover */
-            }
-          
+                .table-responsive {
+                    overflow-x: auto;
+                }
+                
+                .table th, .table td {
+                    vertical-align: middle;
+                    text-align: center;
+                }
+                
+                .table th {
+                    width: auto;
+                    white-space: nowrap;
+                }
+                
+                .table td {
+                    white-space: nowrap;
+                }
+                
+                .dataTablesCard {
+                    width: 100%;
+                    margin: 0 auto;
+                }
+                
+                .dataTables_wrapper {
+                    width: 100%;
+                    margin: 0;
+                }
+                .fas.fa-edit {
+                    color: #43dac1;
+                }
+                .fas.fa-edit:hover {
+                    color: purple;
+                }
+                .far.fa-trash-alt {
+                    color: #dc3545;
+                }
+                .far.fa-trash-alt:hover {
+                    color: red;
+                }
                 `}
             </style>
             {alertMessage && (
@@ -151,33 +153,32 @@ const QuizTable = () => {
             <div className="d-flex align-items-center mb-4 flex-wrap justify-content-between" style={{width:"100%"}}>
                 <h4 className="fs-20 font-w600">Quizzes List</h4>
                 <div className="d-flex justify-content-center w-70"> 
-          <div className="nav-item d-flex align-items-center ml-3">
-            <div className="col-md-4 input-group search-area">
-              <input type="text" 
-                className="form-control" 
-                placeholder="Search"
-                style={{width: '250px'}} 
-                onChange={(e) => searchItems(e.target.value)}
-              />
-              <span className="input-group-text" >
-               <i className="flaticon-381-search-2"></i>
-              </span>
-            </div>
-          </div>
-        </div>
+                    <div className="nav-item d-flex align-items-center ml-3">
+                        <div className="col-md-4 input-group search-area">
+                            <input type="text"
+                                className="form-control"
+                                placeholder="Search"
+                                style={{width: '250px'}} 
+                                onChange={(e) => searchItems(e.target.value)}
+                            />
+                            <span className="input-group-text">
+                                <i className="flaticon-381-search-2"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
                 <div>
-                    <Link to={"#"} className="btn btn-primary me-3 btn-sm">
+                    <Link to="/quiz-form" className="btn btn-primary me-3 btn-sm">
                         <i className="fas fa-plus me-2"></i>Add New Quiz
                     </Link>
                 </div>
             </div>
-          
 
             <div className="row">
                 <div className="col-xl-12">
                     <div className="table-responsive dataTables_wrapper" id="application-data">
-                        <table className="table display mb-4 dataTablesCard  table-responsive-xl card-table dataTable no-footer " id="example5"  >
-                            <thead>                               
+                        <table className="table display mb-4 dataTablesCard table-responsive-xl card-table dataTable no-footer" id="example5">
+                            <thead>
                                 <tr>
                                     <th>Title</th>
                                     <th>Description</th>
@@ -190,18 +191,19 @@ const QuizTable = () => {
                                 {currentItems.map((item) => (
                                     <tr key={item._id}>
                                         <td>{item.title}</td>
-                                        <td>{item.description}</td>
+                                        <td>{item.description.split(' ').slice(0, 7).join(' ')}{item.description.split(' ').length > 7 ? '...' : ''}</td>
                                         <td>{item.passingScore}</td>
                                         <td>{item.duration ? `${item.duration} mins` : 'N/A'}</td>
                                         <td>
+                                        <span>
+                                <Link to={`/${item._id}/edit-quiz`}><i className="fas fa-edit btn-xs sharp me-1"></i></Link>
+                                      </span>
+
                                             <span>
-                                                <Link to="#" ><i className="fas fa-check  btn-xs sharp me-1"></i></Link>
+                                                <Link to="#" onClick={() => handleShowDetails(item)}><i className="fas fa-eye btn-xs sharp me-1"></i></Link>
                                             </span>
                                             <span>
-                                                <Link to="#" ><i className="fas fa-eye  btn-xs sharp me-1"></i></Link>
-                                            </span>
-                                            <span>
-                                                <Link to="#" onClick={() => handleDelete(item._id)}><i className="far fa-trash-alt  btn-xs sharp me-1 "></i></Link>
+                                                <Link to="#" onClick={() => handleDelete(item._id)}><i className="far fa-trash-alt btn-xs sharp me-1"></i></Link>
                                             </span> 
                                         </td>
                                     </tr>
@@ -212,7 +214,7 @@ const QuizTable = () => {
                 </div>
                 <div className="d-flex align-items-center justify-content-between flex-wrap">
                     <div className="sm-mb-0 mb-3">
-                        <h5 className="mb-0">Showing {indexOfFirstItem} to {Math.min(indexOfLastItem, filteredResults.length>0?filteredResults.length:quizzes.length)} of {quizzes.length} entries</h5>
+                        <h5 className="mb-0">Showing {indexOfFirstItem} to {Math.min(indexOfLastItem, filteredResults.length > 0 ? filteredResults.length : quizzes.length)} of {quizzes.length} entries</h5>
                     </div>
                     <nav>
                         <ul className="pagination pagination-circle">
@@ -231,6 +233,7 @@ const QuizTable = () => {
                     </nav>
                 </div>
             </div>
+            <Modal show={showModal} onHide={() => setShowModal(false)} quiz={selectedQuiz} />
         </>
     );
 };
