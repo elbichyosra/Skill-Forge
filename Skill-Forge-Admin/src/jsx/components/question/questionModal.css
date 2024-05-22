@@ -1,0 +1,53 @@
+.modal-content {
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-header {
+    background-color: #f7f7f7;
+    border-bottom: 1px solid #dee2e6;
+  }
+  
+  .modal-header .modal-title {
+    font-weight: bold;
+  }
+  
+  .btn-close {
+    background: transparent;
+    border: none;
+  }
+  
+  .modal-body p {
+    margin-bottom: 1rem;
+  }
+  
+  .options-list {
+    margin-top: 1rem;
+  }
+  
+  .options-list ul {
+    padding-left: 1.5rem;
+    margin: 0.5rem 0;
+  }
+  
+  .options-list ul li {
+    list-style-type: disc;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid #dee2e6;
+    padding-top: 1rem;
+  }
+  
+  .btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+  }
+  
+  .btn-warning:hover {
+    background-color: #e0a800;
+    border-color: #d39e00;
+  }
+  

@@ -64,7 +64,7 @@ const QuizTable = () => {
         setSelectedQuiz(quiz);
         setShowModal(true);
     };
-
+////////////pagination/////////////////
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = Math.min(indexOfLastItem - itemsPerPage + 1, quizzes.length);
     const itemsToDisplay = searchInput.length > 1 ? filteredResults : quizzes;
@@ -78,7 +78,7 @@ const QuizTable = () => {
     const handleNextClick = () => {
         setCurrentPage((prevPage) => Math.min(prevPage + 1, totalPages));
     };
-
+//////////////filter/////////////////
     const searchItems = (searchValue) => {
         setSearchInput(searchValue);
         if (searchValue !== '') {

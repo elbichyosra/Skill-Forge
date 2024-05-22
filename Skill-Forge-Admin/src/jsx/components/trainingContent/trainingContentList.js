@@ -38,7 +38,10 @@ const TrainingContentList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setTrainingContents(trainingContents.filter(content => content._id !== id));
+            // setTrainingContents(trainingContents.filter(content => content._id !== id));
+            const updatedTrainings = trainingContents.filter(content => content._id !== id);
+            setTrainingContents(updatedTrainings);
+            setFilteredResults(updatedTrainings.filter(item => item.title.toLowerCase().includes(searchInput.toLowerCase())));
             setAlertMessage({ type: 'success', message: 'Training content supprimé avec succès!' });
         } catch (error) {
             console.error('Error deleting training content:', error);

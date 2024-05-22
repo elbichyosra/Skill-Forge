@@ -32,10 +32,23 @@ exports.getAllQuestions = async (req, res) => {
     }
 };
 
+// Get questions by quiz ID
+exports.getQuestionsByQuiz = async (req, res) => {
+    try {
+        const { quizId } = req.params;
+        const questions = await Question.find({ quiz: quizId });
+        if (questions.length === 0) {
+            return res.status(404).json({ message: "No questions found for this quiz" });
+        }
+        res.status(200).json(questions);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
 // Get question by ID
 exports.getQuestionById = async (req, res) => {
     try {
-        const question = await Question.findById(req.params.id).populate('quiz');
+        const question = await Question.findById(req.params.id);
         if (question) {
             res.status(200).json(question);
         } else {

@@ -23,7 +23,7 @@ exports.createQuiz = async (req, res) => {
 // Get all quizzes
 exports.getAllQuizzes = async (req, res) => {
     try {
-        const quizzes = await Quiz.find().populate('questions').populate('trainingContent');
+        const quizzes = await Quiz.find();
         res.status(200).json(quizzes);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -33,7 +33,7 @@ exports.getAllQuizzes = async (req, res) => {
 // Get quiz by ID
 exports.getQuizById = async (req, res) => {
     try {
-        const quiz = await Quiz.findById(req.params.id).populate('questions').populate('trainingContent');
+        const quiz = await Quiz.findById(req.params.id);
         if (quiz) {
             res.status(200).json(quiz);
         } else {

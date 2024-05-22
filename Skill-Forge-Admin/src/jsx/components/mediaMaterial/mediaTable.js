@@ -103,7 +103,10 @@ const MediaList = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setMediaMaterials(mediaMaterials.filter(content => content._id !== deletedId));
+            // setMediaMaterials(mediaMaterials.filter(content => content._id !== deletedId));
+            const updatedMedias = mediaMaterials.filter(content => content._id !== deletedId);
+            setMediaMaterials(updatedMedias);
+            setFilteredResults(updatedMedias.filter(item => item.title.toLowerCase().includes(searchInput.toLowerCase())));
             setAlertMessage({ type: 'success', message: 'Media material deleted successfully!' });
         } catch (error) {
             console.error('Error deleting media material:', error);

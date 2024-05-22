@@ -9,5 +9,6 @@ router.get('/',keycloak.protect('backoffice:admin'), questionController.getAllQu
 router.get('/:id',keycloak.protect('backoffice:admin'), questionController.getQuestionById);
 router.put('/:id',keycloak.protect('backoffice:admin'), questionController.updateQuestion);
 router.delete('/:id',keycloak.protect('backoffice:admin'), questionController.deleteQuestion);
-
+// Route to get questions by quiz
+router.get('/getByQuiz/:quizId',keycloak.protect('backoffice:admin'), questionController.getQuestionsByQuiz);
 module.exports = router;

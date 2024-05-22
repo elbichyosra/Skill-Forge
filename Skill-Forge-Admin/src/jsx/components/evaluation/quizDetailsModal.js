@@ -2,7 +2,7 @@
 import React from 'react';
 import { Modal as BootstrapModal } from "react-bootstrap";
 import { FaCalendarAlt, FaEdit } from 'react-icons/fa';
-
+import { Link, useParams } from 'react-router-dom';
 const Modal = ({ show, onHide, quiz }) => {
   return (
     <BootstrapModal show={show} onHide={onHide}>
@@ -21,12 +21,17 @@ const Modal = ({ show, onHide, quiz }) => {
                 <p><strong>Duration:</strong> {quiz.duration ? `${quiz.duration} mins` : 'N/A'}</p>
                 <p><FaCalendarAlt /> <strong>Created At:</strong> {new Date(quiz.createdAt).toLocaleDateString()}</p>
                 <p><FaEdit /> <strong>Updated At:</strong> {new Date(quiz.updatedAt).toLocaleDateString()}</p>
-              </div>
+              
+         
+          
+            <div className="modal-footer">
+            {/* <button type="button" className="btn btn-danger" onClick={onHide}>Cancel</button>  */}
+                      <Link to={`/${quiz._id}/quiz-questions`} className="btn btn-danger">View Questions</Link>
+                  
+                  </div></div>
             ) : <p>Loading...</p>}
           </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-danger" onClick={onHide}>Cancel</button>
-          </div>
+         
         </div>
       </div>
     </BootstrapModal>
