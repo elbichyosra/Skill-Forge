@@ -161,7 +161,7 @@ const QuizQuestions = () => {
           </div>
         </div>
         <div>
-          <Link to="/quiz-form" className="btn btn-primary me-3 btn-sm">
+          <Link to={`/${quizId}/new-question`}  className="btn btn-primary me-3 btn-sm">
             <i className="fas fa-plus me-2"></i>Add New Question
           </Link>
         </div>
@@ -209,7 +209,7 @@ const QuizQuestions = () => {
                             <Button
                               variant="warning"
                               className="custom-btn-warning"
-                              onClick={() => history.push(`/question/${item._id}/edit`)}
+                              onClick={() => history.push(`/${item._id}/update-question`)}
                             >
                               <FontAwesomeIcon icon={faEdit} />
                             </Button>

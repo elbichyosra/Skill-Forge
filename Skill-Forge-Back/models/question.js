@@ -7,6 +7,7 @@ const questionSchema = new Schema({
     options: [{ type: String }], 
     answer: { type: String, required: true }, 
     quiz: {  type: Schema.Types.ObjectId, ref: "Quiz"},
+    // creator:{type:String,required:true},
   }
   ,
   {

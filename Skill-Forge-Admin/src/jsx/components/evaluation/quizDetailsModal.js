@@ -19,6 +19,9 @@ const Modal = ({ show, onHide, quiz }) => {
                 <p><strong>Description:</strong> {quiz.description}</p>
                 <p><strong>Passing Score:</strong> {quiz.passingScore}</p>
                 <p><strong>Duration:</strong> {quiz.duration ? `${quiz.duration} mins` : 'N/A'}</p>
+                {quiz.trainingContent && (
+                  <p><strong>Training Content:</strong> {quiz.trainingContent.title}</p>
+                )}
                 <p><FaCalendarAlt /> <strong>Created At:</strong> {new Date(quiz.createdAt).toLocaleDateString()}</p>
                 <p><FaEdit /> <strong>Updated At:</strong> {new Date(quiz.updatedAt).toLocaleDateString()}</p>
               

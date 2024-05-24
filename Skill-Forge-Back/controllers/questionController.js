@@ -10,6 +10,7 @@ exports.createQuestion = async (req, res) => {
             options,
             answer,
             quiz
+          
         });
         const savedQuestion = await newQuestion.save();
 

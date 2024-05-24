@@ -71,6 +71,8 @@ import QuizTable from "./components/evaluation/quizTable";
 import AddQuiz from "./components/evaluation/addQuiz";
 import EditQuiz from "./components/evaluation/editQuiz";
 import QuizQuestions from "./components/question/questionsList";
+import AddQuestion from "./components/question/addQuestion";
+import EditQuestion from "./components/question/editQuestion";
 import { ThemeContext } from "../context/ThemeContext";
 
 
@@ -138,6 +140,8 @@ const Markup = () => {
     { url: 'quiz-form', component: AddQuiz },
     { url: ':id/edit-quiz', component: EditQuiz },
     { url: ':quizId/quiz-questions', component: QuizQuestions },
+    { url: ':quizId/new-question', component: AddQuestion },
+    { url: ':id/update-question', component: EditQuestion },
   ];
   let path = window.location.pathname;
   path = path.split("/");
