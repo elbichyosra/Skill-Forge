@@ -1,30 +1,22 @@
 const Quiz = require('../models/quiz');
 const Question = require('../models/question');
 const TrainingContent=require('../models/trainingContent')
-// Create a new quiz
-// exports.createQuiz = async (req, res) => {
-//     try {
-//         const { title, description, passingScore, duration,creator} = req.body;
-//         const newQuiz = new Quiz({
-//             title,
-//             description,
-//             passingScore,
-//             duration,
-//             creator,
-           
-//         });
-//         const savedQuiz = await newQuiz.save();
-//         res.status(201).json(savedQuiz);
-//     } catch (error) {
-//         res.status(400).json({ message: error.message });
-//     }
-// };
+
+
 // Create a new quiz
 exports.createQuiz = async (req, res) => {
     try {
         const { title, description, passingScore, duration, trainingContent, creator } = req.body;
-        
-        // Créez le nouveau quiz
+
+        if (trainingContent) {
+            // Check if the training content already has an assigned quiz
+            const trainingContentDoc = await TrainingContent.findById(trainingContent);
+            if (trainingContentDoc.quiz) {
+                return res.status(400).json({ message: 'This training content already has an assigned quiz.' });
+            }
+        }
+
+        // Create the new quiz
         const newQuiz = new Quiz({
             title,
             description,
@@ -34,11 +26,15 @@ exports.createQuiz = async (req, res) => {
             creator,
         });
 
-        // Enregistrez le nouveau quiz dans la base de données
+        // Save the new quiz to the database
         const savedQuiz = await newQuiz.save();
 
-        // Mettez à jour le champ 'quiz' dans le contenu de formation correspondant
-        await TrainingContent.findByIdAndUpdate(trainingContent, { quiz: savedQuiz._id });
+        if (trainingContent) {
+            // Update the 'quiz' field in the corresponding training content
+            const trainingContentDoc = await TrainingContent.findById(trainingContent);
+            trainingContentDoc.quiz = savedQuiz._id;
+            await trainingContentDoc.save();
+        }
 
         res.status(201).json(savedQuiz);
     } catch (error) {
@@ -47,10 +43,12 @@ exports.createQuiz = async (req, res) => {
 };
 
 
+
+
 // Get all quizzes
 exports.getAllQuizzes = async (req, res) => {
     try {
-        const quizzes = await Quiz.find();
+        const quizzes = await Quiz.find().populate('questions').populate('trainingContent');
         res.status(200).json(quizzes);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -71,10 +69,38 @@ exports.getQuizById = async (req, res) => {
     }
 };
 
-// Update a quiz
+// // Update a quiz
+
+
 exports.updateQuiz = async (req, res) => {
     try {
-        const updatedQuiz = await Quiz.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { trainingContent } = req.body;
+        const quizId = req.params.id;
+
+        // Find the current quiz to get the existing training content
+        const currentQuiz = await Quiz.findById(quizId);
+        if (!currentQuiz) {
+            return res.status(404).json({ message: "Quiz not found" });
+        }
+
+        if (trainingContent) {
+            // Remove the quiz ID from the previous training content if it exists and is different
+            if (currentQuiz.trainingContent && currentQuiz.trainingContent !== trainingContent) {
+                await TrainingContent.findByIdAndUpdate(currentQuiz.trainingContent, { quiz: null });
+            }
+
+            // Check if the new training content is already assigned to another quiz
+            const existingQuiz = await Quiz.findOne({ trainingContent });
+            if (existingQuiz && existingQuiz._id.toString() !== quizId) {
+                return res.status(400).json({ message: "This training content is already assigned to another quiz." });
+            }
+
+            // Update the new training content with the quiz ID
+            await TrainingContent.findByIdAndUpdate(trainingContent, { quiz: quizId });
+        }
+
+        // Update the quiz with the new data
+        const updatedQuiz = await Quiz.findByIdAndUpdate(quizId, req.body, { new: true });
         if (updatedQuiz) {
             res.status(200).json(updatedQuiz);
         } else {
@@ -85,19 +111,7 @@ exports.updateQuiz = async (req, res) => {
     }
 };
 
-// Delete a quiz
-// exports.deleteQuiz = async (req, res) => {
-//     try {
-//         const deletedQuiz = await Quiz.findByIdAndDelete(req.params.id);
-//         if (deletedQuiz) {
-//             res.status(200).json({ message: "Quiz deleted successfully" });
-//         } else {
-//             res.status(404).json({ message: "Quiz not found" });
-//         }
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };
+
 // Delete a quiz
 exports.deleteQuiz = async (req, res) => {
     try {
@@ -115,22 +129,3 @@ exports.deleteQuiz = async (req, res) => {
 };
 
 
-// Assign question to quiz
-// exports.assignQuestionToQuiz = async (req, res) => {
-//     try {
-//         const { quizId, questionId } = req.body;
-//         const quiz = await Quiz.findById(quizId);
-//         if (!quiz) {
-//             return res.status(404).json({ message: "Quiz not found" });
-//         }
-//         const question = await Question.findById(questionId);
-//         if (!question) {
-//             return res.status(404).json({ message: "Question not found" });
-//         }
-//         quiz.questions.push(questionId);
-//         await quiz.save();
-//         res.status(200).json(quiz);
-//     } catch (error) {
-//         res.status(500).json({ message: error.message });
-//     }
-// };

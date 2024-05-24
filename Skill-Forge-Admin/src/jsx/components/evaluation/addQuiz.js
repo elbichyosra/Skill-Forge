@@ -13,7 +13,7 @@ const AddQuiz = () => {
         description: '',
         passingScore: 70,  // Default passing score
         duration: '',  // Duration in minutes
-        trainingContent: '',  // Selected training content ID
+        trainingContent: null,  // Selected training content ID
         creator: userId  // Creator ID
     });
     const [trainingContents, setTrainingContents] = useState([]);
@@ -22,15 +22,17 @@ const AddQuiz = () => {
     useEffect(() => {
         // Fetch training content options
         const fetchTrainingContents = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/trainingContent/', {
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                    }
-                });
-                setTrainingContents(response.data);
-            } catch (error) {
-                console.error('Error fetching training content:', error);
+            if (token) {
+                try {
+                    const response = await axios.get('http://localhost:5000/trainingContent/', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                        }
+                    });
+                    setTrainingContents(response.data);
+                } catch (error) {
+                    console.error('Error fetching training content:', error);
+                }
             }
         };
         fetchTrainingContents();
@@ -42,14 +44,15 @@ const AddQuiz = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.passingScore <= 0 || formData.duration <= 0) {
-            setAlertMessage({ type: 'danger', message: 'Passing Score and Duration must be positive numbers.' });
-            return;
-        }
-
-        setAlertMessage(null);
+      
         try {
-            const response = await axios.post('http://localhost:5000/quiz/', formData, {
+            if (formData.passingScore <= 0 || formData.duration <= 0) {
+                setAlertMessage({ type: 'danger', message: 'Passing Score and Duration must be positive numbers.' });
+                return;
+            }
+    
+            setAlertMessage(null);
+            const response = await axios.post('http://localhost:5000/quiz/', { ...formData, creator: userId }, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'
@@ -62,19 +65,19 @@ const AddQuiz = () => {
                 description: '',
                 passingScore: 70,
                 duration: '',
-                trainingContent: '',
+                trainingContent: null,
                 creator: userId
             });
 
             setTimeout(() => {
                 history.push('/quizzes-table');
             }, 2000);
-        }  catch (error) {
-            setAlertMessage({ type: 'danger', message: error.response.data.message || 'Error creating quiz' });
+        } catch (error) {
+            setAlertMessage({ type: 'danger', message: error.response?.data?.message || 'Error creating quiz' });
         } finally {
             setTimeout(() => {
                 setAlertMessage(null);
-            }, 2000);
+            }, 4000);
         }
     };
 
@@ -110,7 +113,7 @@ const AddQuiz = () => {
                                 </div>
                                 <div className="mb-3">
                                     <label className="form-label">Training Content</label>
-                                    <select className="form-select" name="trainingContent" value={formData.trainingContent} onChange={handleChange}>
+                                    <select className="form-control" name="trainingContent" value={formData.trainingContent} onChange={handleChange} >
                                         <option value="">Select Training Content</option>
                                         {trainingContents.map(training => (
                                             <option key={training._id} value={training._id}>{training.title}</option>

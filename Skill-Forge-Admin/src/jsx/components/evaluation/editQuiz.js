@@ -14,8 +14,10 @@ const EditQuiz = () => {
         description: '',
         passingScore: 70,  // Default passing score
         duration: '',  // Duration in minutes
-        creator: userId  // Creator ID
+        creator: userId,  // Creator ID
+        trainingContent: '' // Training content ID
     });
+    const [trainingContents, setTrainingContents] = useState([]);
     const [alertMessage, setAlertMessage] = useState(null);
 
     useEffect(() => {
@@ -31,7 +33,22 @@ const EditQuiz = () => {
                 setAlertMessage({ type: 'danger', message: error.response.data.message || 'Error fetching quiz details' });
             }
         };
+
+        const fetchTrainingContents = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/trainingContent/', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                setTrainingContents(response.data);
+            } catch (error) {
+                setAlertMessage({ type: 'danger', message: error.response.data.message || 'Error fetching training contents' });
+            }
+        };
+
         fetchQuiz();
+        fetchTrainingContents();
     }, [id, token]);
 
     const handleChange = (e) => {
@@ -40,16 +57,18 @@ const EditQuiz = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.passingScore <= 0 || formData.duration <= 0) {
-            setAlertMessage({ type: 'danger', message: 'Passing Score and Duration must be positive numbers.' });
-            setTimeout(() => {
-                setAlertMessage(null);
-            }, 2000);
-            return;
-        }
 
-        setAlertMessage(null);
+      
         try {
+            if (formData.passingScore <= 0 || formData.duration <= 0) {
+                setAlertMessage({ type: 'danger', message: 'Passing Score and Duration must be positive numbers.' });
+                setTimeout(() => {
+                    setAlertMessage(null);
+                }, 2000);
+                return;
+            }
+    
+            setAlertMessage(null);
             const response = await axios.put(`http://localhost:5000/quiz/${id}`, formData, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -98,6 +117,15 @@ const EditQuiz = () => {
                                 <div className="mb-3">
                                     <label className="form-label">Duration (minutes)</label>
                                     <input type="number" className="form-control" name="duration" value={formData.duration} onChange={handleChange} required />
+                                </div>
+                                <div className="mb-3">
+                                    <label className="form-label">Training Content</label>
+                                    <select className="form-control" name="trainingContent" value={formData.trainingContent} onChange={handleChange} >
+                                        <option value="">Select Training Content</option>
+                                        {trainingContents.map(content => (
+                                            <option key={content._id} value={content._id}>{content.title}</option>
+                                        ))}
+                                    </select>
                                 </div>
                                 <div className="card-footer text-end">
                                     <div>
