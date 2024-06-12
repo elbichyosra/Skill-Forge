@@ -9,6 +9,6 @@ router.get('/',keycloak.protect('backoffice:admin'), quizController.getAllQuizze
 router.get('/:id',keycloak.protect('backoffice:admin'), quizController.getQuizById);
 router.put('/:id',keycloak.protect('backoffice:admin'), quizController.updateQuiz);
 router.delete('/:id',keycloak.protect('backoffice:admin'), quizController.deleteQuiz);
-
+router.get('/byTrainingContent/:trainingContentId',keycloak.protect(), quizController.getQuizByTrainingContent);
 
 module.exports = router;

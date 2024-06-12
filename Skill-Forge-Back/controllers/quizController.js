@@ -129,3 +129,17 @@ exports.deleteQuiz = async (req, res) => {
 };
 
 
+exports.getQuizByTrainingContent = async (req, res) => {
+    try {
+        const trainingContentId = req.params.trainingContentId;
+        const quiz = await Quiz.findOne({ trainingContent: trainingContentId }).populate('questions');
+        
+        if (!quiz) {
+            return res.status(404).json({ message: 'Quiz not found for this training content.' });
+        }
+
+        res.status(200).json(quiz);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

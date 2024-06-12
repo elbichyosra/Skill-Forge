@@ -14,8 +14,8 @@ import { ReactComponent as PdfIcon } from 'feather-icons/dist/icons/file-text.sv
 import { ReactComponent as VideoIcon } from 'feather-icons/dist/icons/video.svg';
 import { ReactComponent as SvgDecoratorBlob1 } from "images/svg-decorator-blob-7.svg";
 import { ReactComponent as SvgDecoratorBlob2 } from "images/svg-decorator-blob-8.svg";
-import { LuTimer } from "react-icons/lu"; 
-import { NULL } from 'sass';
+import { LuTimer } from "react-icons/lu";
+import Quiz from './quiz';
 
 const Info = tw.div`flex items-center text-xs text-gray-600 mb-2`;
 const Card = tw.div`border rounded-lg bg-white shadow-md `;
@@ -37,8 +37,8 @@ const TitleToggleIcon = motion(styled.span`
   }
 `);
 const SubTitle = motion(tw.dd`pointer-events-none text-sm sm:text-base leading-relaxed`);
-const File = tw.div`mt-5`;
-const FileTitle = tw.h2`text-xl font-semibold flex items-center`;
+const File = tw.div`mt-1`;
+const FileTitle = tw.h2`text-xl font-semibold flex items-center mb-12`;
 const FileTypeIcon = tw.span`mr-2`;
 const FileDescription = tw.p`mt-2  text-gray-700`;
 const FileMedia = tw.div`mt-4 rounded-lg overflow-hidden`;
@@ -54,6 +54,7 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
 
 const MediaMaterials = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState(null);
+  const [showQuiz, setShowQuiz] = useState(false);
   const [mediaMaterials, setMediaMaterials] = useState([]);
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
@@ -82,20 +83,15 @@ const MediaMaterials = () => {
     fetchMediaMaterials();
   }, [token, id, userId]);
 
- 
-
   const handleVideoEnded = async (mediaId) => {
     try {
-     
       setMediaMaterials(prevState =>
         prevState.map(media =>
           media._id === mediaId && media.file.includes('.mp4') ? { ...media, isChecked: true } : media
         )
       );
-  
-      
+
       await axios.put(`http://localhost:5000/mediaMaterial/updateCheckboxState/${mediaId}`, {
-       
         userId,
         isChecked: true
       }, {
@@ -107,18 +103,15 @@ const MediaMaterials = () => {
       console.error('Error updating video checkbox state:', error);
     }
   };
-  
 
   const handleTitleClick = async (mediaId) => {
     try {
-      const areAllPdfChecked = mediaMaterials.every(media => media.file.includes('.pdf') && media.isChecked);
       const updatedMaterials = mediaMaterials.map(media => {
         if (media._id === mediaId && media.file.includes('.pdf')) {
-          media.isChecked = !areAllPdfChecked;
-          
-        axios.put(`http://localhost:5000/mediaMaterial/updateCheckboxState/${mediaId}`, {
+          media.isChecked = true;
+          axios.put(`http://localhost:5000/mediaMaterial/updateCheckboxState/${mediaId}`, {
             userId,
-            isChecked: media.isChecked
+            isChecked: true
           }, {
             headers: {
               Authorization: `Bearer ${token}`
@@ -133,7 +126,10 @@ const MediaMaterials = () => {
     }
   };
 
-
+  const handleShowQuiz = () => {
+    setShowQuiz(true);
+    setActiveTitleIndex('quiz');
+  };
 
   return (
     <AnimationRevealPage>
@@ -151,10 +147,12 @@ const MediaMaterials = () => {
                         key={index}
                         onClick={() => {
                           setActiveTitleIndex(activeTitleIndex === index ? null : index);
+                          setShowQuiz(false);
+                          handleTitleClick(mediaMaterial._id);
                         }}
                         className="group"
                       >
-                        <Title onClick={() => handleTitleClick(mediaMaterial._id)}>
+                        <Title>
                           <Text>{mediaMaterial.title}</Text>
                           <TitleToggleIcon
                             variants={{
@@ -190,7 +188,7 @@ const MediaMaterials = () => {
                             </Info>
                             <Checkbox
                               checked={mediaMaterial.isChecked}
-                              onChange={()=>{}}
+                              onChange={() => {}}
                             />
                           </div>
                           <Info>
@@ -202,6 +200,41 @@ const MediaMaterials = () => {
                         </SubTitle>
                       </FAQ>
                     ))}
+                    <FAQ
+                      key={`quiz-${id}`}
+                      onClick={() => handleShowQuiz()}
+                      className="group"
+                    >
+                      <Title>
+                        <Text>Quiz</Text>
+                        <TitleToggleIcon
+                          variants={{
+                            collapsed: { rotate: 0 },
+                            open: { rotate: -180 }
+                          }}
+                          initial="collapsed"
+                          animate={activeTitleIndex === 'quiz' ? 'open' : 'collapsed'}
+                          transition={{ duration: 0.02, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                          <ChevronDownIcon />
+                        </TitleToggleIcon>
+                      </Title>
+                      <SubTitle
+                        variants={{
+                          open: { opacity: 1, height: 'auto', marginTop: '16px' },
+                          collapsed: { opacity: 0, height: 0, marginTop: '0px' }
+                        }}
+                        initial="collapsed"
+                        animate={activeTitleIndex === 'quiz' ? 'open' : 'collapsed'}
+                        transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                      >
+                        <div tw='flex justify-between items-center'>
+                          <Info>
+                            Take quiz
+                          </Info>
+                        </div>
+                      </SubTitle>
+                    </FAQ>
                   </FAQSContainer>
                 </CardBody>
               </Card>
@@ -211,28 +244,34 @@ const MediaMaterials = () => {
                 <CardBody>
                   {activeTitleIndex !== null ? (
                     <File>
-                      <FileTitle>
-                        {mediaMaterials[activeTitleIndex].title}
-                      </FileTitle>
-                      {mediaMaterials[activeTitleIndex].file.includes('.pdf') ? (
-                        <FileMedia>
-                          <embed src={`http://localhost:5000/${mediaMaterials[activeTitleIndex].file}`} type="application/pdf" width="100%" height="600px" />
-                        </FileMedia>
-                      ) : mediaMaterials[activeTitleIndex].file.includes('.mp4') ? (
-                        <FileMedia>
-                          <video
-                            controls
-                            src={`http://localhost:5000/${mediaMaterials[activeTitleIndex].file}`}
-                            className="img-fluid rounded"
-                            style={{ maxHeight: '300px', width: '100%' }}
-                            onEnded={() => handleVideoEnded(mediaMaterials[activeTitleIndex]._id)}
-                          />
-                        </FileMedia>
-                      ) : null}
-                      <div>
-                        <Subheading>Description</Subheading>
-                        <FileDescription>{mediaMaterials[activeTitleIndex].description}</FileDescription>
-                      </div>
+                      {showQuiz ? (
+                        <Quiz trainingContentId={id} />
+                      ) : (
+                        <>
+                          <FileTitle>
+                            {mediaMaterials[activeTitleIndex]?.title || "Titre non disponible"}
+                          </FileTitle>
+                          {mediaMaterials[activeTitleIndex]?.file.includes('.pdf') ? (
+                            <FileMedia>
+                              <embed src={`http://localhost:5000/${mediaMaterials[activeTitleIndex].file}`} type="application/pdf" width="100%" height="600px" />
+                            </FileMedia>
+                          ) : mediaMaterials[activeTitleIndex]?.file.includes('.mp4') ? (
+                            <FileMedia>
+                              <video
+                                controls
+                                src={`http://localhost:5000/${mediaMaterials[activeTitleIndex].file}`}
+                                className="img-fluid rounded"
+                                style={{ maxHeight: '300px', width: '100%' }}
+                                onEnded={() => handleVideoEnded(mediaMaterials[activeTitleIndex]._id)}
+                              />
+                            </FileMedia>
+                          ) : null}
+                          <div>
+                            <Subheading>Description</Subheading>
+                            <FileDescription>{mediaMaterials[activeTitleIndex]?.description || "Description non disponible"}</FileDescription>
+                          </div>
+                        </>
+                      )}
                     </File>
                   ) : (
                     <Description>Select a training module to view details</Description>
