@@ -13,19 +13,23 @@ const QuestionText = tw.h2`text-lg font-semibold`;
 const OptionList = tw.ul`mt-4`;
 const OptionItem = tw.li`bg-gray-200 rounded-md p-3 mt-2 cursor-pointer hover:bg-gray-300`;
 
-const StartButtonContainer = tw.div`flex justify-center`; // Center the button
+const StartButtonContainer = tw.div`flex justify-center`;
 const StartButton = tw.button`mt-6 bg-primary-500 text-white px-6 py-2 rounded-lg`;
 const Heading = tw.h1`text-2xl font-bold flex items-center`;
 const SubHeading = tw.h2`text-xl font-semibold flex items-center mt-4`;
-const Paragraph = tw.p`mt-2 text-gray-600`;
+const Paragraph = tw.p` text-gray-600`;
+const ResultCard = tw.div`bg-green-100 p-6 w-full text-left `;
 
 const Quiz = ({ trainingContentId }) => {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [startQuiz, setStartQuiz] = useState(false);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0); // Track current question
-  const [answers, setAnswers] = useState([]); // Store user's answers
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [answers, setAnswers] = useState([]);
+  const [score, setScore] = useState(0);
+  const [finished, setFinished] = useState(false);
   const token = useSelector((state) => state.auth.token);
+  const userId = useSelector((state) => state.auth.userId);
 
   useEffect(() => {
     const fetchQuiz = async () => {
@@ -47,21 +51,39 @@ const Quiz = ({ trainingContentId }) => {
   }, [trainingContentId, token]);
 
   const handleNextQuestion = () => {
-    // Move to the next question
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
   const handleAnswerSelect = (answer) => {
-    // Save the selected answer
     const newAnswers = [...answers];
     newAnswers[currentQuestionIndex] = answer;
     setAnswers(newAnswers);
   };
 
-  const handleFinishQuiz = () => {
-    // Process the user's answers, calculate score, etc.
-    // For example, you can log the answers to the console
-    console.log('User Answers:', answers);
+  const handleFinishQuiz = async () => {
+    let calculatedScore = 0;
+    quiz.questions.forEach((question, index) => {
+      if (question.answer === answers[index]) {
+        calculatedScore += 1;
+      }
+    });
+    calculatedScore = (calculatedScore / quiz.questions.length) * 100;
+    setScore(calculatedScore);
+    setFinished(true);
+
+    try {
+      await axios.post('http://localhost:5000/results', {
+        userId,
+        quizId: quiz._id,
+        score: calculatedScore,
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    } catch (error) {
+      console.error('Error saving result:', error);
+    }
   };
 
   if (loading) {
@@ -73,18 +95,15 @@ const Quiz = ({ trainingContentId }) => {
   }
 
   return (
-   <>
+    <Container>
       {!startQuiz ? (
-        <Container>
         <InstructionsCard>
           <Heading>
             <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: '0.5rem' }} />
             {quiz.title}
           </Heading>
           <Paragraph>{quiz.description}</Paragraph>
-          <Heading>
-            How to Submit the Quiz?
-          </Heading>
+          <Heading>How to Submit the Quiz?</Heading>
           <div>
             <SubHeading>
               <FontAwesomeIcon icon={faCheckCircle} style={{ marginRight: '0.5rem' }} />
@@ -104,47 +123,62 @@ const Quiz = ({ trainingContentId }) => {
             <Paragraph><strong>Test Duration:</strong> {quiz.duration ? `${quiz.duration} min` : "N/A"}</Paragraph>
           </div>
           <StartButtonContainer>
-            <StartButton onClick={() => setStartQuiz(true)}>Start the Test</StartButton> {/* Centered button */}
+            <StartButton onClick={() => setStartQuiz(true)}>Start the Test</StartButton>
           </StartButtonContainer>
-        </InstructionsCard> </Container>
+        </InstructionsCard>
       ) : (
-        <QuizCard>
-          {quiz.questions.map((question, index) => (
-            <QuestionCard key={index} style={{ display: index === currentQuestionIndex ? 'block' : 'none' }}>
-              <QuestionText>
-                {index + 1}. {question.questionText}
-              </QuestionText>
-              <OptionList>
-                {question.options.map((option, optionIndex) => (
-                 <OptionItem> <label key={optionIndex}>
-                    <input
-                      type="radio"
-                      name={`question-${currentQuestionIndex}`}
-                      value={option}
-                      onChange={() => handleAnswerSelect(option)}
-                      style={{ marginRight: '0.5rem' }}
-                    />
-                    {option}
-                  </label></OptionItem>
-                ))}
-              </OptionList>
-            </QuestionCard>
-          ))}
-          {/* Display "Next" button if not the last question */}
-          {currentQuestionIndex < quiz.questions.length - 1 && (
-            <StartButtonContainer>
-              <StartButton onClick={handleNextQuestion}>Next</StartButton>
-            </StartButtonContainer>
+        <>
+          {!finished ? (
+            <QuizCard>
+              {quiz.questions.map((question, index) => (
+                <QuestionCard key={index} style={{ display: index === currentQuestionIndex ? 'block' : 'none' }}>
+                  <QuestionText>
+                    {index + 1}. {question.questionText}
+                  </QuestionText>
+                  <OptionList>
+                    {question.options.map((option, optionIndex) => (
+                      <OptionItem key={optionIndex}>
+                        <label>
+                          <input
+                            type="radio"
+                            name={`question-${currentQuestionIndex}`}
+                            value={option}
+                            onChange={() => handleAnswerSelect(option)}
+                            style={{ marginRight: '0.5rem' }}
+                          />
+                          {option}
+                        </label>
+                      </OptionItem>
+                    ))}
+                  </OptionList>
+                </QuestionCard>
+              ))}
+              {currentQuestionIndex < quiz.questions.length - 1 && (
+                <StartButtonContainer>
+                  <StartButton onClick={handleNextQuestion}>Next</StartButton>
+                </StartButtonContainer>
+              )}
+              {currentQuestionIndex === quiz.questions.length - 1 && (
+                <StartButtonContainer>
+                  <StartButton onClick={handleFinishQuiz}>Finish</StartButton>
+                </StartButtonContainer>
+              )}
+            </QuizCard>
+          ) : (
+            <ResultCard>
+              <Heading>Results</Heading>
+              <Paragraph>Your score: {score}%</Paragraph>
+              {score >= quiz.passingScore ? (
+                <Paragraph>Congratulations! You passed the quiz.</Paragraph>
+              ) : (
+                <Paragraph>Sorry, you failed the quiz.</Paragraph>
+                
+              )}
+            </ResultCard>
           )}
-          {/* Display "Finish" button for the last question */}
-          {currentQuestionIndex === quiz.questions.length - 1 && (
-            <StartButtonContainer>
-              <StartButton onClick={handleFinishQuiz}>Finish</StartButton>
-            </StartButtonContainer>
-          )}
-        </QuizCard>
+        </>
       )}
-   </>
+    </Container>
   );
 };
 

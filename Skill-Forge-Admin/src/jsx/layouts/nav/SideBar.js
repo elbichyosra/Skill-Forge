@@ -184,7 +184,7 @@ const SideBar = () => {
        <></>
       )}
         <MM className="metismenu" id="menu">
-		  <li className={`${deshBoard.includes(path) ? "mm-active" : ""}`}>
+		  {/* <li className={`${deshBoard.includes(path) ? "mm-active" : ""}`}>
             <Link className="has-arrow ai-icon" to="#" >
               <i className="flaticon-025-dashboard"></i>
               <span className="nav-text">Dashboard</span>
@@ -213,7 +213,7 @@ const SideBar = () => {
 					<li><Link className={`${path === "new-job" ? "mm-active" : ""}`} to="/new-job">New Job</Link></li>
 					<li><Link className={`${path === "user-profile" ? "mm-active" : ""}`} to="/user-profile">User Profile</Link></li>
 				</ul> 
-			</li>	
+			</li>	 */}
       <li className={`${content.includes(path) ? "mm-active" : ""}`}>
       <Link className="has-arrow" to="#"  >
       <i className="flaticon-086-star"></i>

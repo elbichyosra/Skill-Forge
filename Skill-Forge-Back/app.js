@@ -9,7 +9,7 @@ const session = require('express-session');
 const commentRoutes=require('./routes/Comments')
 const questionRoutes=require('./routes/Question')
 const quizRoutes=require('./routes/Quiz')
-
+const resultRoutes=require('./routes/Results')
 const { keycloak, sessionStore } = require('./config/keycloak');
 const notificationRoutes=require('./routes/Notification')
 // Connexion à la base de données
@@ -45,6 +45,7 @@ app.use('/comment', commentRoutes);
 app.use('/notification', notificationRoutes);
 app.use('/quiz', quizRoutes);
 app.use('/question', questionRoutes);
+app.use('/results', resultRoutes);
 // Gestion des erreurs 404 (route non trouvée)
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
