@@ -10,6 +10,7 @@ const quizSchema = new Schema({
     duration: { type: Number }, // Optional duration in minutes
     trainingContent: {  type: Schema.Types.ObjectId, ref: "trainingContent"},
     creator:{type:String,required:true},
+    completedByUsers: [{ userId: String, isCompleted: Boolean }],
   }
   ,
   {

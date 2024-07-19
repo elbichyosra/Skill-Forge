@@ -143,3 +143,31 @@ exports.getQuizByTrainingContent = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+// Update quiz completion state
+exports.updateQuizCompletion = async (req, res) => {
+    const { userId, isCompleted } = req.body;
+    const quizId = req.params.id;
+  
+    try {
+      const quiz = await Quiz.findById(quizId);
+      if (!quiz) {
+        return res.status(404).json({ message: 'Quiz not found' });
+      }
+  
+      const userCompletionIndex = quiz.completedByUsers.findIndex(user => user.userId === userId);
+  
+      if (userCompletionIndex !== -1) {
+        quiz.completedByUsers[userCompletionIndex].isCompleted = isCompleted;
+      } else {
+        quiz.completedByUsers.push({ userId, isCompleted });
+      }
+  
+      await quiz.save();
+      res.status(200).json({ message: 'Quiz completion state updated successfully' });
+    } catch (error) {
+      console.error('Error updating quiz completion state:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  
+  
