@@ -56,6 +56,8 @@ const MediaMaterials = () => {
   const [activeTitleIndex, setActiveTitleIndex] = useState(null);
   const [showQuiz, setShowQuiz] = useState(false);
   const [mediaMaterials, setMediaMaterials] = useState([]);
+  const [completedQuiz, setCompletedQuiz] = useState(false);
+  const [quizId, setQuizId] = useState(null); // État pour stocker le quizId
   const token = useSelector((state) => state.auth.token);
   const userId = useSelector((state) => state.auth.userId);
   const { id } = useParams();
@@ -75,11 +77,25 @@ const MediaMaterials = () => {
             isChecked: media.checkedByUser.some(user => user.userId === userId && user.isChecked)
           }));
           setMediaMaterials(mediaWithCheckboxes);
+
+          // Appel pour récupérer le quiz associé au trainingId
+          const quizResponse = await axios.get(`http://localhost:5000/quiz/byTrainingContent/${id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          if (quizResponse.data) {
+            setQuizId(quizResponse.data._id);
+            // Vérifiez si le quiz a été complété
+            const isCompleted = await fetchCompletionStatus(userId, quizResponse.data._id);
+            setCompletedQuiz(isCompleted);
+          }
         } catch (error) {
           console.error('Error fetching media material:', error);
         }
       }
     };
+
     fetchMediaMaterials();
   }, [token, id, userId]);
 
@@ -131,10 +147,27 @@ const MediaMaterials = () => {
     setActiveTitleIndex('quiz');
   };
 
+  const fetchCompletionStatus = async (userId, quizId) => {
+    try {
+      const response = await axios.get(`http://localhost:5000/quiz/quiz/completion-status/${userId}`, {
+        params: { quizId }
+      });
+      return response.data.isCompleted;
+    } catch (error) {
+      console.error('Erreur lors de la récupération du statut de complétion du quiz:', error);
+      return false;
+    }
+  };
+
+  const handleQuizCompletion = async () => {
+    const isCompleted = await fetchCompletionStatus(userId, quizId);
+    setCompletedQuiz(isCompleted);
+  };
+
   return (
     <AnimationRevealPage>
       <Header />
-      <Container >
+      <Container>
         <ContentWithPaddingXl>
           <Column>
             <LeftSection>
@@ -232,6 +265,10 @@ const MediaMaterials = () => {
                           <Info>
                             Take quiz
                           </Info>
+                          <Checkbox
+                            checked={completedQuiz}
+                            onChange={() => {}}
+                          />
                         </div>
                       </SubTitle>
                     </FAQ>
@@ -245,7 +282,7 @@ const MediaMaterials = () => {
                   {activeTitleIndex !== null ? (
                     <File>
                       {showQuiz ? (
-                        <Quiz trainingContentId={id} />
+                        <Quiz trainingContentId={id} quizId={quizId} onQuizCompleted={handleQuizCompletion} />
                       ) : (
                         <>
                           <FileTitle>

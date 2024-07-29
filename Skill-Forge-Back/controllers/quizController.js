@@ -144,6 +144,33 @@ exports.getQuizByTrainingContent = async (req, res) => {
     }
 };
 // Update quiz completion state
+// exports.updateQuizCompletion = async (req, res) => {
+//     const { userId, isCompleted } = req.body;
+//     const quizId = req.params.id;
+  
+//     try {
+//       const quiz = await Quiz.findById(quizId);
+//       if (!quiz) {
+//         return res.status(404).json({ message: 'Quiz not found' });
+//       }
+  
+//       const userCompletionIndex = quiz.completedByUsers.findIndex(user => user.userId === userId);
+  
+//       if (userCompletionIndex !== -1) {
+//         quiz.completedByUsers[userCompletionIndex].isCompleted = isCompleted;
+//       } else {
+//         quiz.completedByUsers.push({ userId, isCompleted });
+//       }
+  
+//       await quiz.save();
+//       res.status(200).json({ message: 'Quiz completion state updated successfully' });
+//     } catch (error) {
+//       console.error('Error updating quiz completion state:', error);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   };
+  
+  // backend/quiz.js
 exports.updateQuizCompletion = async (req, res) => {
     const { userId, isCompleted } = req.body;
     const quizId = req.params.id;
@@ -169,5 +196,26 @@ exports.updateQuizCompletion = async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   };
+  // backend/quiz.js
+exports.getQuizCompletionStatus = async (req, res) => {
+    const { userId } = req.params;
+    const quizId = req.query.quizId; // Utiliser query paramètre pour obtenir l'ID du quiz
   
+    try {
+      const quiz = await Quiz.findById(quizId);
+      if (!quiz) {
+        return res.status(404).json({ message: 'Quiz not found' });
+      }
+  
+      const userCompletion = quiz.completedByUsers.find(user => user.userId === userId);
+      if (userCompletion) {
+        return res.status(200).json(userCompletion);
+      } else {
+        return res.status(404).json({ message: 'Completion status not found for this user' });
+      }
+    } catch (error) {
+      console.error('Error fetching quiz completion status:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
   

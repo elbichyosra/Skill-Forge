@@ -11,4 +11,8 @@ router.put('/:id',keycloak.protect('backoffice:admin'), quizController.updateQui
 router.delete('/:id',keycloak.protect('backoffice:admin'), quizController.deleteQuiz);
 router.get('/byTrainingContent/:trainingContentId',keycloak.protect(), quizController.getQuizByTrainingContent);
 router.put('/updateCompletion/:id',keycloak.protect(), quizController.updateQuizCompletion);
+// Route pour obtenir le statut de complétion du quiz
+router.get('/quiz/completion-status/:userId', quizController.getQuizCompletionStatus);
+
+
 module.exports = router;

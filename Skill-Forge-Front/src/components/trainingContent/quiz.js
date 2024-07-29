@@ -50,7 +50,7 @@ const Timer = ({ duration, onTimeUp }) => {
   );
 };
 
-const Quiz = ({ trainingContentId }) => {
+const Quiz = ({ trainingContentId,onQuizCompleted }) => {
   const [quiz, setQuiz] = useState(null);
   const [loading, setLoading] = useState(true);
   const [startQuiz, setStartQuiz] = useState(false);
@@ -101,6 +101,41 @@ const Quiz = ({ trainingContentId }) => {
     setAnswers(newAnswers);
   };
 
+  // const handleFinishQuiz = async () => {
+  //   let calculatedScore = 0;
+  //   quiz.questions.forEach((question, index) => {
+  //     if (question.answer === answers[index]) {
+  //       calculatedScore += 1;
+  //     }
+  //   });
+  //   calculatedScore = (calculatedScore / quiz.questions.length) * 100;
+  //   setScore(calculatedScore);
+  //   setFinished(true);
+
+  //   try {
+  //     await axios.post('http://localhost:5000/results', {
+  //       userId,
+  //       quizId: quiz._id,
+  //       score: calculatedScore,
+  //     }, {
+  //       headers: {
+  //       Authorization: `Bearer ${token}`
+  //       }
+  //     });
+  //      // Mettre à jour l'état du quiz pour l'utilisateur
+  //   await axios.put(`http://localhost:5000/quiz/updateCompletion/${quiz._id}`, {
+  //     userId,
+  //     isCompleted: true
+  //   }, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`
+  //     }
+  //   });
+  //   } catch (error) {
+  //     console.error('Error saving result:', error);
+  //   }
+  // };
+
   const handleFinishQuiz = async () => {
     let calculatedScore = 0;
     quiz.questions.forEach((question, index) => {
@@ -122,19 +157,25 @@ const Quiz = ({ trainingContentId }) => {
         Authorization: `Bearer ${token}`
         }
       });
-       // Mettre à jour l'état du quiz pour l'utilisateur
-    // await axios.put(`http://localhost:5000/quiz/updateCompletion/${quiz._id}`, {
-    //   userId,
-    //   isCompleted: true
-    // }, {
-    //   headers: {
-    //     Authorization: `Bearer ${token}`
-    //   }
-    // });
+
+      // Mettre à jour l'état du quiz pour l'utilisateur
+      await axios.put(`http://localhost:5000/quiz/updateCompletion/${quiz._id}`, {
+        userId,
+        isCompleted: true
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Appeler la fonction de mise à jour de l'état de la case à cocher
+      // onQuizCompletion();
+      onQuizCompleted();
     } catch (error) {
       console.error('Error saving result:', error);
     }
   };
+
 
   const handleTimeUp = () => {
     handleFinishQuiz();
