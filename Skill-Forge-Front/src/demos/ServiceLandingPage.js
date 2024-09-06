@@ -14,18 +14,20 @@ import Testimonial from "components/testimonials/TwoColumnWithImageAndRating.js"
 import FAQ from "components/faqs/SingleCol.js";
 import GetStarted from "components/cta/GetStartedLight.js";
 import Footer from "components/footers/FiveColumnWithInputForm.js";
-
+import TrainingList from "components/trainingContent/trainingList";
 const HighlightedText = tw.span`text-primary-500`
 
 export default () => {
   return (
     <AnimationRevealPage>
       <Hero />
+      <TrainingList/>
       <FeatureStats/>
-      <Features 
+
+      {/* <Features 
         heading={<>Amazing <HighlightedText>Features</HighlightedText></>}
-      />
-      <MainFeature
+      /> */}
+      {/* <MainFeature
         heading={<>Cloud built by and for <HighlightedText>Professionals</HighlightedText></>}
       />
       <Testimonial 
@@ -36,12 +38,13 @@ export default () => {
       />
       <FAQ
         heading={<>Any <HighlightedText>Questions ?</HighlightedText></>}
-      />
+      /> */}
+    
       <Blog
         subheading="Blog"
         heading={<>We love <HighlightedText>Writing</HighlightedText></>}
       />
-      <GetStarted/>
+      {/* <GetStarted/> */}
       <Footer />
     </AnimationRevealPage>
   );

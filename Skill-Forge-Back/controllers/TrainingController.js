@@ -5,6 +5,7 @@ const handlebars = require('handlebars');
 const {createNotification}=require('./notitficationController')
 const SendMail= require('./SendMail');
 const Quiz = require('../models/quiz');
+
 // Créer un nouveau trainingContent
 exports.createTrainingContent = async (req, res) => {
     try {
@@ -166,31 +167,96 @@ exports.getAssignedTrainingContentForUser = async (req, res) => {
     }
 };
 
-exports.updateProgress = async (req, res) => {
-    const { trainingId, userId } = req.params;
+// exports.updateProgress = async (req, res) => {
+//     const { trainingId, userId } = req.params;
     
-    try {
-      const training = await TrainingContent.findById(trainingId).populate('mediaMaterials');
+//     try {
+//       const training = await TrainingContent.findById(trainingId).populate('mediaMaterials');
   
+//       if (!training) {
+//         return res.status(404).json({ message: "Training non trouvé." });
+//       }
+  
+//       // Vérifier si la liste des matériaux est définie et non vide
+//       if (!training.mediaMaterials || training.mediaMaterials.length === 0) {
+//         return ;
+//       }
+//      // Vérifier si l'utilisateur est un participant dans la formation
+//      if (!training.participants.includes(userId)) {
+//         return res.status(403).json({ message: "L'utilisateur n'est pas un participant dans cette formation." });
+//       }
+//       // Calculer le progrès de l'utilisateur dans cet training
+//       const mediaMaterialsCheckedByUser = training.mediaMaterials.filter(material => {
+//         return material.checkedByUser.some(user => user.userId === userId && user.isChecked);
+//       });
+     
+//       const progress = Math.ceil((mediaMaterialsCheckedByUser.length / training.mediaMaterials.length) * 100);
+    
+  
+//       // Mettre à jour le progrès de l'utilisateur dans cet training
+//       training.userProgress.set(userId, progress);
+  
+//       // Enregistrer les modifications
+//       await training.save();
+  
+//       res.status(200).json({ message: "Progrès mis à jour avec succès." ,progress});}
+//      catch (error) {
+//       console.error("Erreur lors de la mise à jour du progrès :", error);
+//       res.status(500).json({ message: "Erreur lors de la mise à jour du progrès." });
+//     }
+//   };
+  // Contrôleur pour gérer la participation au formation
+
+  
+  
+  
+  exports.updateProgress = async (req, res) => {
+    const { trainingId, userId } = req.params;
+  
+    try {
+      const training = await TrainingContent.findById(trainingId).populate('mediaMaterials quiz');
+      
       if (!training) {
         return res.status(404).json({ message: "Training non trouvé." });
       }
   
-      // Vérifier si la liste des matériaux est définie et non vide
       if (!training.mediaMaterials || training.mediaMaterials.length === 0) {
-        return ;
+        return res.status(404).json({ message: "Aucun matériel trouvé pour ce training." });
       }
-     // Vérifier si l'utilisateur est un participant dans la formation
-     if (!training.participants.includes(userId)) {
+  
+      // Vérifier si l'utilisateur est un participant dans la formation
+      if (!training.participants.includes(userId)) {
         return res.status(403).json({ message: "L'utilisateur n'est pas un participant dans cette formation." });
       }
-      // Calculer le progrès de l'utilisateur dans cet training
+  
+      // Calculer le nombre de matériaux multimédias cochés par l'utilisateur
       const mediaMaterialsCheckedByUser = training.mediaMaterials.filter(material => {
         return material.checkedByUser.some(user => user.userId === userId && user.isChecked);
       });
-     
-      const progress = Math.ceil((mediaMaterialsCheckedByUser.length / training.mediaMaterials.length) * 100);
-    
+  
+      // Initialiser le compteur de progrès
+      let completedItems = mediaMaterialsCheckedByUser.length;
+      const totalItems = training.mediaMaterials.length;
+  
+      // Vérifier si un quiz est associé à cette formation
+      let quizCompleted = false;
+      if (training.quiz) {
+        const quiz = await Quiz.findById(training.quiz._id);
+  
+        // Vérifier si l'utilisateur a complété le quiz
+        quizCompleted = quiz.completedByUsers.some(user => user.userId === userId && user.isCompleted);
+  
+        // Si le quiz est complété, ajouter +1 aux éléments complétés
+        if (quizCompleted) {
+          completedItems += 1;
+        }
+      }
+  
+      // Calculer le nombre total d'éléments (matériaux multimédias + quiz)
+      const totalElements = totalItems + (training.quiz ? 1 : 0);
+  
+      // Calculer le progrès de l'utilisateur
+      const progress = Math.ceil((completedItems / totalElements) * 100);
   
       // Mettre à jour le progrès de l'utilisateur dans cet training
       training.userProgress.set(userId, progress);
@@ -198,14 +264,14 @@ exports.updateProgress = async (req, res) => {
       // Enregistrer les modifications
       await training.save();
   
-      res.status(200).json({ message: "Progrès mis à jour avec succès." ,progress});}
-     catch (error) {
+      res.status(200).json({ message: "Progrès mis à jour avec succès.", progress });
+    } catch (error) {
       console.error("Erreur lors de la mise à jour du progrès :", error);
       res.status(500).json({ message: "Erreur lors de la mise à jour du progrès." });
     }
   };
-  // Contrôleur pour gérer la participation au formation
-exports.participateInTraining = async (req, res) => {
+  
+  exports.participateInTraining = async (req, res) => {
     try {
         const { trainingId, userId } = req.params;
         // Recherche de l'entraînement par ID

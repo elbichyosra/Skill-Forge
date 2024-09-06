@@ -7,7 +7,7 @@ import ComponentRenderer from "ComponentRenderer.js";
 import ThankYouPage from "ThankYouPage.js";
 import ServiceLandingPage from "demos/ServiceLandingPage";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import TrainingContentList from "components/trainingContent/trainingList";
+import TrainingContentList from "pages/trainingListPage";
 import TrainingDetails from "components/trainingContent/trainingDetails";
 import MediaMaterials from "components/trainingContent/mediaMaterials";
 import AssignedTrainings from "components/trainingContent/assignedTrainings";

@@ -141,8 +141,8 @@ export default ({ heading = 'All Training Contents' }) => {
 
   return (
     <>
-      <AnimationRevealPage>
-     <Header />
+    
+    
       <Container style={{ paddingRight: '30px' }}>
         <ContentWithPaddingXl>
           <HeaderRow>
@@ -213,8 +213,7 @@ export default ({ heading = 'All Training Contents' }) => {
         <DecoratorBlob1 />
         <DecoratorBlob2 />
       </Container>
-      <Footer />
-      </AnimationRevealPage>
+    
     </>
   );
 };
