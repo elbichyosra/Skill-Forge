@@ -1,7 +1,7 @@
 import React from "react";
 import tw from "twin.macro";
 import styled from "styled-components";
-import { css } from "styled-components/macro"; //eslint-disable-line
+import { FiMapPin, FiMail } from 'react-icons/fi'; // Import the icons
 import { PrimaryButton as PrimaryButtonBase } from "components/misc/Buttons.js";
 
 import LogoImage from "images/Skill__21.png";
@@ -9,24 +9,8 @@ import { ReactComponent as FacebookIcon } from "images/facebook-icon.svg";
 import { ReactComponent as TwitterIcon } from "images/twitter-icon.svg";
 import { ReactComponent as YoutubeIcon } from "images/youtube-icon.svg";
 
-const Container = tw.div`relative bg-gray-200 text-gray-700 -mb-8 -mx-8 px-8 py-20 lg:py-24`;
-const Content = tw.div`max-w-screen-xl mx-auto relative z-10`;
-const SixColumns = tw.div`flex flex-wrap text-center sm:text-left justify-center sm:justify-start md:justify-between -mt-12`;
-
-const Column = tw.div`px-4 sm:px-0 sm:w-1/4 md:w-auto mt-12`;
-
-const ColumnHeading = tw.h5`uppercase font-bold`;
-
-const LinkList = tw.ul`mt-6 text-sm font-medium`;
-const LinkListItem = tw.li`mt-3`;
-const Link = tw.a`border-b-2 border-transparent hocus:border-gray-700 pb-1 transition duration-300`;
-
-const SubscribeNewsletterColumn = tw(Column)`text-center lg:text-left w-full! lg:w-auto! mt-20 lg:mt-12`;
-const SubscribeNewsletterContainer = tw.div`max-w-sm mx-auto lg:mx-0 `;
-const SubscribeText = tw.p`mt-2 lg:mt-6 text-sm font-medium text-gray-600`;
-const SubscribeForm = tw.form`mt-4 lg:mt-6 text-sm sm:flex max-w-xs sm:max-w-none mx-auto sm:mx-0`;
-const Input = tw.input`bg-gray-300 px-6 py-3 rounded sm:rounded-r-none border-2 sm:border-r-0 border-gray-400 hover:border-primary-500 focus:outline-none transition duration-300 w-full`;
-const SubscribeButton = tw(PrimaryButtonBase)`mt-4 sm:mt-0 w-full sm:w-auto rounded sm:rounded-l-none px-8 py-3`;
+const Container = tw.div`relative bg-gray-200 text-gray-700 -mb-8 -mx-8 px-8 py-20 lg:py-10`;
+const Content = tw.div`max-w-screen-xl mx-auto relative z-10 text-center`;
 
 const Divider = tw.div`my-16 border-b-2 border-gray-300 w-full`;
 
@@ -46,82 +30,40 @@ const SocialLink = styled.a`
   }
 `;
 
+const TextSection = tw.div`max-w-2xl mx-auto mb-2`;
+const Text = tw.p`text-lg leading-relaxed`;
+
+const ContactInfo = tw.div`mt-4 text-gray-600 flex flex-col items-center space-y-2`;
+
+const IconText = styled.div`
+  ${tw`flex items-center space-x-2`}
+  svg {
+    ${tw`w-5 h-5 text-gray-600`}
+  }
+`;
+
 export default () => {
   return (
     <Container>
       <Content>
-        <SixColumns>
-          <Column>
-            <ColumnHeading>Main</ColumnHeading>
-            <LinkList>
-              <LinkListItem>
-                <Link href="#">Blog</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">FAQs</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Support</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">About Us</Link>
-              </LinkListItem>
-            </LinkList>
-          </Column>
-          <Column>
-            <ColumnHeading>Product</ColumnHeading>
-            <LinkList>
-              <LinkListItem>
-                <Link href="#">Log In</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Personal</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Business</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Team</Link>
-              </LinkListItem>
-            </LinkList>
-          </Column>
-          <Column>
-            <ColumnHeading>Press</ColumnHeading>
-            <LinkList>
-              <LinkListItem>
-                <Link href="#">Logos</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Events</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Stories</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Office</Link>
-              </LinkListItem>
-            </LinkList>
-          </Column>
-          <Column>
-            <ColumnHeading>Legal</ColumnHeading>
-            <LinkList>
-              <LinkListItem>
-                <Link href="#">GDPR</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Privacy Policy</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Terms of Service</Link>
-              </LinkListItem>
-              <LinkListItem>
-                <Link href="#">Disclaimer</Link>
-              </LinkListItem>
-            </LinkList>
-          </Column>
-         
-        </SixColumns>
+        <TextSection>
+          <Text>
+            Join us and make your company a better place.
+          </Text>
+          <ContactInfo>
+            <IconText>
+              <FiMapPin />
+              <span>El Ghazella, Raoued street, Ariana, 2088 Tunisia</span>
+            </IconText>
+            <IconText>
+              <FiMail />
+              <span>skillforge24@gmail.com</span>
+            </IconText>
+          </ContactInfo>
+        </TextSection>
+        
         <Divider />
+
         <ThreeColRow>
           <LogoContainer>
             <LogoImg src={LogoImage} />
@@ -129,13 +71,13 @@ export default () => {
           </LogoContainer>
           <CopywrightNotice>&copy; 2024 Skill Forge Inc. All Rights Reserved.</CopywrightNotice>
           <SocialLinksContainer>
-            <SocialLink href="https://facebook.com">
+            <SocialLink href="https://www.facebook.com/ciamsolutions">
               <FacebookIcon />
             </SocialLink>
-            <SocialLink href="https://twitter.com">
+            <SocialLink href="https://www.linkedin.com/company/ciam-solutions/">
               <TwitterIcon />
             </SocialLink>
-            <SocialLink href="https://youtube.com">
+            <SocialLink href="https://www.youtube.com/channel/UCdv9bPhLF1znRGctVvDqiUA">
               <YoutubeIcon />
             </SocialLink>
           </SocialLinksContainer>

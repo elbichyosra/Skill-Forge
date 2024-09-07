@@ -2,7 +2,7 @@ import React from "react";
 import GlobalStyles from 'styles/GlobalStyles';
 import { css } from "styled-components/macro"; //eslint-disable-line
 
-
+import ContactUsForm from "components/faqs/contactUS";
 import ComponentRenderer from "ComponentRenderer.js";
 import ThankYouPage from "ThankYouPage.js";
 import ServiceLandingPage from "demos/ServiceLandingPage";
@@ -30,6 +30,7 @@ export default function App() {
           <Route path="/TrainingDetails/:id" element={<TrainingDetails/>} />
           <Route path="/:id/mediasList" element={<MediaMaterials/>} />
           <Route path="/assignedTrainings" element={<AssignedTrainings/>} />
+          <Route path="/contactUs" element={<ContactUsForm/>} />
           <Route path="/" element={<ServiceLandingPage />} />
         </Routes>
       </Router>

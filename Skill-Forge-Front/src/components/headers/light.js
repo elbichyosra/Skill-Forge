@@ -107,6 +107,7 @@ useEffect(() => {
       <NavLink href="/#">Home</NavLink>
       <NavLink href="/trainingList">All Trainings</NavLink>
       <NavLink href="/assignedTrainings">Assigned Trainings</NavLink>
+      <NavLink href="/contactUs">Contact Us </NavLink>
       {isLogin ? (
         <>
           <NavLink href={profileUrl}>{userName}</NavLink>
@@ -115,6 +116,7 @@ useEffect(() => {
       ) : (
         <PrimaryLink href="/#">Login</PrimaryLink>
       )}
+      
     </NavLinks>
   ];
 

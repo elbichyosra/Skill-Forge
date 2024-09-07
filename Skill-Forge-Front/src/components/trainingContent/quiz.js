@@ -143,7 +143,7 @@ const Quiz = ({ trainingContentId,onQuizCompleted }) => {
         calculatedScore += 1;
       }
     });
-    calculatedScore = (calculatedScore / quiz.questions.length) * 100;
+    calculatedScore = Math.round((calculatedScore / quiz.questions.length) * 100);
     setScore(calculatedScore);
     setFinished(true);
 

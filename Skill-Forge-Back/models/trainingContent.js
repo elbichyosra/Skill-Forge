@@ -6,7 +6,7 @@ const trainingContentSchema = new Schema({
     title: { type: String, required: true },
     description: { type: String},
     category: { type: String},
-    image: { type: String },
+    image: { type: String ,default: 'uploads/acte.jpg' },
     status: { type: String, enum: ['available', 'unavailable'], default: 'available' },
     endDate: { type: Date },
     mediaMaterials: [{ type: Schema.Types.ObjectId, ref: "mediaMaterials" }],

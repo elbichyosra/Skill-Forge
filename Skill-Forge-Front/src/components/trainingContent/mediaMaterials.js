@@ -226,7 +226,8 @@ const MediaMaterials = () => {
                           </div>
                           <Info>
                             <FileTypeIcon>
-                              <LuTimer size={20} />
+                            {mediaMaterial.file.includes('.mp4') ? (
+                              <LuTimer size={20} />):null}
                             </FileTypeIcon>
                             {mediaMaterial.duration}
                           </Info>
