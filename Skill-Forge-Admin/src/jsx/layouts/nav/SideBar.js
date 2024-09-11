@@ -186,12 +186,12 @@ const SideBar = () => {
        <></>
       )}
         <MM className="metismenu" id="menu">
-		  {/* <li className={`${deshBoard.includes(path) ? "mm-active" : ""}`}>
-            <Link className="has-arrow ai-icon" to="#" >
+		  <li className={`${deshBoard.includes(path) ? "mm-active" : ""}`}>
+            <Link className={`${path === "dashboard" ? "mm-active" : ""}`} to="/dashboard" >
               <i className="flaticon-025-dashboard"></i>
               <span className="nav-text">Dashboard</span>
             </Link>
-            <ul >
+            {/* <ul >
               <li><Link className={`${path === "dashboard" ? "mm-active" : ""}`} to="/dashboard"> Dashboard Light</Link></li>
               <li><Link className={`${path === "dashboard-dark" ? "mm-active" : ""}`} to="/dashboard-dark"> Dashboard Dark</Link></li>
               <li><Link className={`${path === "search-jobs" ? "mm-active" : ""}`} to="/search-jobs"> Jobs</Link></li>
@@ -200,9 +200,9 @@ const SideBar = () => {
               <li><Link className={`${path === "statistics" ? "mm-active" : ""}`} to="/statistics">Statistics</Link></li>
               <li><Link className={`${path === "companies" ? "mm-active" : ""}`} to="/companies">Companies</Link></li>
               <li><Link className={`${path === "task" ? "mm-active" : ""}`} to="/task">Task</Link></li>
-            </ul>
+            </ul> */}
           </li>
-			<li className={`${job.includes(path) ? "mm-active" : ""}`}>
+			{/* <li className={`${job.includes(path) ? "mm-active" : ""}`}>
 				<Link className="has-arrow" to="#" >
 				  <i className="flaticon-093-waving"></i>
 				  <span className="nav-text">Jobs</span>

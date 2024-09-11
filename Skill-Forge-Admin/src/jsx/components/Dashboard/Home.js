@@ -13,6 +13,7 @@ import RecentActivity from '../Jobick/Home/RecentActivity';
 import HomeSlider from '../Jobick/Home/HomeSlider';
 import axios from 'axios';
 import { useSelector } from "react-redux";
+import CompletionRateChart from './completionRateBar';
 //import FinancialChartMultipleData from './FinancialChartMultipleData';
 
 //Images
@@ -81,7 +82,7 @@ const Home = () => {
 	return(
 		<>
 			<div className="row">
-				<div className="col-xl-6">
+				<div className="">
 				
 					<div className="row">
 						<div className="col-xl-12">
@@ -150,18 +151,33 @@ const Home = () => {
 								</div>
 							</div>
 						</div>
-						<div className="col-xl-12">
+						
+               
+                    {/* Autres composants */}
+                    <div className="col-xl-12">
+                        <div className="card">
+                            <div className="card-body">
+                                <div className="row">
+                                    <h4 className="fs-20 mb-3">Training Content Completion Rate</h4>
+                                    <CompletionRateChart />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+						{/* <div className="col-xl-12">
 							<VacanyTab />
+							
 						</div>
 						<div className="col-xl-12">
 							<CanvasChartTab />
 						</div>
 						<div className="col-xl-12">
 							<FeaturedCompanies />
-						</div>
+						</div> */}
 					</div>
 				</div>
-				<div className="col-xl-6">
+				{/* <div className="col-xl-6">
 					<div className="row">
 						<div className="col-xl-12">
 							<div className="card">
@@ -269,7 +285,7 @@ const Home = () => {
 							</div>
 						</div>		
 					</div>
-				</div>
+				</div> */}
 			</div>	
 		</>
 	)
