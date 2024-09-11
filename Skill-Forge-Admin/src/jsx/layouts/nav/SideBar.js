@@ -12,7 +12,7 @@ import { logoutUser } from "../../../services/AuthManager";
 import { useDispatch, useSelector } from "react-redux";
 
 /// Image
-import profile from "../../../images/profile/pic1.jpg";
+import profile from "../../../images/profile/account.png"
 import useAuth from "../../../hooks/useAuth";
 class MM extends Component {
 	componentDidMount() {
@@ -52,14 +52,14 @@ const SideBar = () => {
     function toggleFunc() {
       return aaa.classList.toggle("menu-toggle");
     }
-    btn.addEventListener("click", toggleFunc);
+    // btn.addEventListener("click", toggleFunc);
 	
 	//sidebar icon Heart blast
 		var handleheartBlast = document.querySelector('.heart');
         function heartBlast() {
             return handleheartBlast.classList.toggle("heart-blast");
         }
-        handleheartBlast.addEventListener('click', heartBlast);
+        // handleheartBlast.addEventListener('click', heartBlast);
 	
   }, []);
   //let scrollPosition = useScrollPosition();
@@ -103,7 +103,7 @@ const SideBar = () => {
 	],
   evaluation= [
 		"quizzes-table",
-  
+  "quiz-Results",
 	
 	];
    
@@ -134,7 +134,9 @@ const SideBar = () => {
 				  data-toggle="dropdown"
 				>
 					<div className="header-info2 d-flex align-items-center">
-						<img src={profile} width={20} alt="" />
+
+            <img src={profile} style={{ width: "57px", height: "57px",marginRight:2 }} className="rounded-full" alt="" />
+
 						<div className="d-flex align-items-center sidebar-info">
 							<div>
 								<span className="font-w400 d-block">{userName}</span>
@@ -232,7 +234,7 @@ const SideBar = () => {
             </Link>
             <ul >
 					<li><Link className={`${path === "training-table" ? "mm-active" : ""}`} to="/quizzes-table">Quizzes</Link></li>
-
+          <li><Link className={`${path === "quiz-Results" ? "mm-active" : ""}`} to="/quiz-Results">Quiz Results</Link></li>
           </ul>
             </li>
           
@@ -243,11 +245,12 @@ const SideBar = () => {
           
          
         </MM>
+        <div className="mb-20"></div>
 		
-		<div className="copyright">
+		{/* <div className="copyright">
 			<p><strong>Skill Forge</strong> © 2024 All Rights Reserved</p>
 			<p className="fs-12">Made with <span className="heart"></span></p>
-		</div>
+		</div> */}
       </PerfectScrollbar>
     </div>
   );

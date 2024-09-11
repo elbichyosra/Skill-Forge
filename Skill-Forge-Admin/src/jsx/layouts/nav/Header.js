@@ -68,14 +68,15 @@ const Header = ({ onNote }) => {
 					</div>
 				</div> */}
             </div>
-            <ul className="navbar-nav header-right main-notification">
-				{/* <li className="nav-item">
+            	{/* <li className="nav-item">
 					<div className="input-group search-area">
 						<input type="text" className="form-control" placeholder="Search here..." />
 						<span className="input-group-text"><Link to={"#"}><i className="flaticon-381-search-2"></i></Link></span>
 					</div>
 				</li> */}
+            <ul className="navbar-nav header-right main-notification">
 			
+{/* 			
               <Dropdown
                 as="li"
                 className="nav-item dropdown notification_dropdown "
@@ -114,14 +115,14 @@ const Header = ({ onNote }) => {
                     See all notifications <i className="ti-arrow-right" />
                   </Link>
                 </Dropdown.Menu>
-              </Dropdown>
+              </Dropdown> */}
 			 
-				<li className="nav-item header-profile">
+				
 				{/* <Link to={"#"} className="btn btn-primary d-sm-inline-block d-none">Generate Report<i className="las la-signal ms-3 scale5"></i></Link> */}
-					<Link to={"#"} className="nav-link" role="button" data-bs-toggle="dropdown">
+        {/* <li className="nav-item header-profile"><Link to={"#"} className="nav-link" role="button" data-bs-toggle="dropdown">
 						<img src={profile} width="20" alt=""/>
 					</Link>
-				</li>
+				</li> */}
             </ul>
           </div>
         </nav>

@@ -11,8 +11,8 @@ import CanvasChartTab from '../Jobick/Home/CanvasChartTab';
 import FeaturedCompanies from '../Jobick/Home/FeaturedCompanies';
 import RecentActivity from '../Jobick/Home/RecentActivity';
 import HomeSlider from '../Jobick/Home/HomeSlider';
-
-
+import axios from 'axios';
+import { useSelector } from "react-redux";
 //import FinancialChartMultipleData from './FinancialChartMultipleData';
 
 //Images
@@ -38,6 +38,44 @@ const ApexPieChart = loadable(() =>
 
 const Home = () => {	
 	const { changeBackground, background } = useContext(ThemeContext);
+ // State to store statistics
+ const [stats, setStats] = useState({ trainingContentCount: 0, quizCount: 0, mediaMaterialsCount: 0  });
+ const token = useSelector((state) => state.auth.token);
+ const [usersCount, setUsersCount] = useState(0);
+ // Fetch statistics from backend
+ useEffect(() => {
+	 const fetchStats = async () => {
+		if(token){ try {
+			 const response = await axios.get('http://localhost:5000/dashboard/', {
+				headers: {
+					Authorization: `Bearer ${token}`
+				}
+			}); 
+			 setStats(response.data);
+		 } catch (error) {
+			 console.error("Error fetching statistics:", error);
+		 }
+	  } };
+	 fetchStats();
+ }, [token]);
+ // Fetch users count from Keycloak
+ useEffect(() => {
+	const fetchUsersCount = async () => {
+		if (token) {
+			try {
+				const response = await axios.get('http://localhost:9000/admin/realms/skillForge/users/', {
+					headers: {
+						Authorization: `Bearer ${token}`
+					}
+				});
+				setUsersCount(response.data.length); // Assurez-vous que l'API retourne les utilisateurs ou modifiez en fonction de la réponse
+			} catch (error) {
+				console.error("Error fetching users count:", error);
+			}
+		}
+	};
+	fetchUsersCount();
+}, [token]);
 
 	const [control3, setControl3] = useState('Newest');
 	return(
@@ -52,13 +90,19 @@ const Home = () => {
 									<div className="row separate-row">
 										<div className="col-sm-6">
 											<div className="job-icon pb-4 d-flex justify-content-between">
-												<div>
+												{/* <div>
 													<div className="d-flex align-items-center mb-1">
 														<h2 className="mb-0">342</h2>
 														<span className="text-success ms-3">+0.5 %</span>
 													</div>	
 													<span className="fs-14 d-block mb-2">Interview Schedules</span>
-												</div>	
+												</div>	 */}
+												 <div>
+                                                    <div className="d-flex align-items-center mb-1">
+                                                        <h2 className="mb-0">{stats.trainingContentCount}</h2>
+                                                    </div>
+                                                    <span className="fs-14 d-block mb-2">Total Training Contents</span>
+                                                </div>
 												<div id="NewCustomers">
 													<NewCustomers1 />
 												</div>
@@ -66,12 +110,11 @@ const Home = () => {
 										</div>
 										<div className="col-sm-6">
 											<div className="job-icon pb-4 pt-4 pt-sm-0 d-flex justify-content-between">
-												<div>
-													<div className="d-flex align-items-center mb-1">
-														<h2 className="mb-0">984</h2>
-													</div>	
-													<span className="fs-14 d-block mb-2">Application Sent</span>
-												</div>	
+											<div><div className="d-flex align-items-center mb-1">
+                                                        <h2 className="mb-0">{stats.quizCount}</h2>
+                                                    </div>
+                                                    <span className="fs-14 d-block mb-2">Total Quizzes</span>
+                                                </div>	
 												<div id="NewCustomers1">
 													<NewCustomers2 />
 												</div>
@@ -79,13 +122,12 @@ const Home = () => {
 										</div>
 										<div className="col-sm-6">
 											<div className="job-icon pt-4 pb-sm-0 pb-4 pe-3 d-flex justify-content-between">
-												<div>
-													<div className="d-flex align-items-center mb-1">
-														<h2 className="mb-0">1,567k</h2>
-														<span className="text-danger ms-3">-2 % </span>
-													</div>	
-													<span className="fs-14 d-block mb-2">Profile Viewed</span>
-												</div>	
+											<div>
+                                                    <div className="d-flex align-items-center mb-1">
+                                                        <h2 className="mb-0">{stats.mediaMaterialsCount}</h2>
+                                                    </div>
+                                                    <span className="fs-14 d-block mb-2">Total Media Materials</span>
+                                                </div>	
 												<div id="NewCustomers2">
 													<NewCustomers3 />
 												</div>
@@ -93,12 +135,12 @@ const Home = () => {
 										</div>
 										<div className="col-sm-6">
 											<div className="job-icon pt-4  d-flex justify-content-between">
-												<div>
+											<div>
 													<div className="d-flex align-items-center mb-1">
-														<h2 className="mb-0">437</h2>
-													</div>	
-													<span className="fs-14 d-block mb-2">Unread Messages</span>
-												</div>	
+														<h2 className="mb-0">{usersCount}</h2>
+													</div>
+													<span className="fs-14 d-block mb-2">Total Users</span>
+												</div>
 												<div id="NewCustomers3">
 													<NewCustomers4 />
 												</div>

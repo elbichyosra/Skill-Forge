@@ -6,7 +6,7 @@ const Footer = () => {
     <div className="footer">
       <div className="copyright">
         <p>
-          Copyright © Designed &amp; Developed by{" HireCue Team "}
+          Copyright © Designed &amp; Developed by{" Skill Forge "}
           {d.getFullYear()}
         </p>
       </div>

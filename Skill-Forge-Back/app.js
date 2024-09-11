@@ -13,6 +13,7 @@ const resultRoutes=require('./routes/Results')
 const messageRoutes=require('./routes/message')
 const { keycloak, sessionStore } = require('./config/keycloak');
 const notificationRoutes=require('./routes/Notification')
+const dashboardStats=require('./routes/dashboardStats')
 // Connexion à la base de données
 mongoose.connect(process.env.mongo_uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log("DB connected"))
@@ -48,6 +49,7 @@ app.use('/quiz', quizRoutes);
 app.use('/question', questionRoutes);
 app.use('/results', resultRoutes);
 app.use('/contact', messageRoutes);
+app.use('/dashboard', dashboardStats);
 // Gestion des erreurs 404 (route non trouvée)
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
