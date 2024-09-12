@@ -104,6 +104,7 @@ const SideBar = () => {
   evaluation= [
 		"quizzes-table",
   "quiz-Results",
+  "user-Results"
 	
 	];
    
@@ -235,6 +236,7 @@ const SideBar = () => {
             <ul >
 					<li><Link className={`${path === "training-table" ? "mm-active" : ""}`} to="/quizzes-table">Quizzes</Link></li>
           <li><Link className={`${path === "quiz-Results" ? "mm-active" : ""}`} to="/quiz-Results">Quiz Results</Link></li>
+          <li><Link className={`${path === "user-Results" ? "mm-active" : ""}`} to="/user-Results">User Progress Graph</Link></li>
           </ul>
             </li>
           

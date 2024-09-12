@@ -3,6 +3,7 @@ import { Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
+import * as XLSX from 'xlsx'; // Import xlsx library
 
 const QuizResultsTable = () => {
     const [alertMessage, setAlertMessage] = useState(null);
@@ -17,17 +18,13 @@ const QuizResultsTable = () => {
         const fetchResults = async () => {
             if (token) {
                 try {
-                    // Fetch quiz results
                     const resultsResponse = await axios.get('http://localhost:5000/results', {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
 
-                    // Extract user IDs from results
                     const userIds = [...new Set(resultsResponse.data.map(result => result.userId))];
-
-                    // Fetch user details for each userId individually
                     const userPromises = userIds.map(userId =>
                         axios.get(`http://localhost:9000/admin/realms/skillForge/users/${userId}`, {
                             headers: {
@@ -36,23 +33,19 @@ const QuizResultsTable = () => {
                         })
                     );
 
-                    // Await all user requests
                     const usersResponses = await Promise.all(userPromises);
-
-                    // Create a map of users by their IDs
                     const usersMap = usersResponses.reduce((map, response) => {
                         const user = response.data;
-                        map[user.id] = user; // Adjust if user ID property is different
+                        map[user.id] = user;
                         return map;
                     }, {});
 
-                    // Map results to include user details, quiz title, and training content title
                     const resultsWithUserDetails = resultsResponse.data.map(result => ({
                         ...result,
                         user: usersMap[result.userId],
                         quizTitle: result.quizId.title,
-                        trainingContentTitle: result.quizId.trainingContent?.title || 'N/A', // Default to 'N/A' if no title
-                        score: Math.round(result.score) 
+                        trainingContentTitle: result.quizId.trainingContent?.title || 'N/A',
+                        score: Math.round(result.score)
                     }));
 
                     setQuizResults(resultsWithUserDetails);
@@ -81,7 +74,7 @@ const QuizResultsTable = () => {
         if (searchValue !== '') {
             const filteredData = quizResults.filter((item) => {
                 return (
-                    [item.user.firstName, item.user.lastName, item.user.email, item.quizTitle, item.trainingContentTitle,item.score]
+                    [item.user.firstName, item.user.lastName, item.user.email, item.quizTitle, item.trainingContentTitle, item.score]
                         .join(' ')
                         .toLowerCase()
                         .includes(searchValue.toLowerCase())
@@ -92,6 +85,26 @@ const QuizResultsTable = () => {
             setFilteredResults([]);
         }
         setCurrentPage(1);
+    };
+
+    // Function to export data to Excel
+    const exportToExcel = () => {
+        // Prepare the data for Excel
+        const data = quizResults.map(item => ({
+            "User Name": `${item.user.firstName} ${item.user.lastName}`,
+            "Email": item.user.email,
+            "Training Content": item.trainingContentTitle,
+            "Quiz Title": item.quizTitle,
+            "Score": `${item.score}%`
+        }));
+
+        // Create a new worksheet and workbook
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Results");
+
+        // Generate Excel file and trigger download
+        XLSX.writeFile(workbook, 'QuizResults.xlsx');
     };
 
     return (
@@ -121,6 +134,10 @@ const QuizResultsTable = () => {
                         </div>
                     </div>
                 </div>
+
+                <button className="btn btn-success ml-3" onClick={exportToExcel}>
+                    Export to Excel
+                </button>
             </div>
 
             <div className="row">
@@ -134,7 +151,6 @@ const QuizResultsTable = () => {
                                     <th>Training Content</th>
                                     <th>Quiz Title</th>
                                     <th>Score</th>
-                                  
                                 </tr>
                             </thead>
                             <tbody>
@@ -142,10 +158,9 @@ const QuizResultsTable = () => {
                                     <tr key={item._id}>
                                         <td>{item.user.firstName} {item.user.lastName}</td>
                                         <td>{item.user.email}</td>
-                                        <td>{item.trainingContentTitle}</td> {/* Training content title */}
+                                        <td>{item.trainingContentTitle}</td>
                                         <td>{item.quizTitle}</td>
-                                        <td>{item.score}%</td> {/* Score formatted as percentage */}
-                                     
+                                        <td>{item.score}%</td>
                                     </tr>
                                 ))}
                             </tbody>

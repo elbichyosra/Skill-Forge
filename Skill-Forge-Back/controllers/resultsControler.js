@@ -37,75 +37,6 @@ exports.getResultByUserAndQuiz = async (req, res) => {
 
 
 
-// exports.getAllResults = async (req, res) => {
-//   try {
-//     // Récupérer tous les résultats de quiz
-//     const results = await Result.find(); 
-
-//     // Vérifier si des résultats existent
-//     if (results.length > 0) {
-//       res.status(200).json(results);
-//     } else {
-//       res.status(404).json({ message: 'No quiz results found.' });
-//     }
-//   } catch (error) {
-//     console.error('Error fetching quiz results:', error);
-//     res.status(500).json({ message: 'Error fetching quiz results.' });
-//   }
-// };
-
-// const axios = require('axios');
-
-// exports.getAllResults = async (req, res) => {
-//     const token = req.headers.authorization;
-
-//     try {
-//         const results = await Result.find();
-//         if (results.length === 0) {
-//             return res.status(404).json({ message: 'No quiz results found.' });
-//         }
-
-//         const userIds = [...new Set(results.map(result => result.userId))];
-//         const quizIds = [...new Set(results.map(result => result.quizId))];
-
-//         const [usersResponse, quizzesResponse] = await Promise.all([
-//             axios.get(`http://localhost:9000/admin/realms/skillForge/users`, { 
-//                 headers: { Authorization: token }
-//             }),
-//             axios.get(`http://localhost:5000/quiz`, { 
-//                 headers: { Authorization: token }
-//             })
-//         ]);
-
-//         const usersMap = new Map(usersResponse.data.map(user => [user.id, user]));
-//         const quizzesMap = new Map(quizzesResponse.data.map(quiz => [quiz.id, quiz]));
-
-//         const resultsWithDetails = results.map(result => {
-//             const user = usersMap.get(result.userId);
-//             const quiz = quizzesMap.get(result.quizId);
-
-//             if (!user || !quiz) {
-//                 console.error('User or quiz data missing for result:', result);
-//                 return null;
-//             }
-
-//             return {
-//                 userName: `${user.firstName} ${user.lastName}`,
-//                 userEmail: user.email,
-//                 quizTitle: quiz.title,
-//                 score: result.score
-//             };
-//         }).filter(result => result !== null);
-
-//         res.status(200).json(resultsWithDetails);
-//     } catch (error) {
-//         console.error('Error fetching quiz results with details:', error);
-//         res.status(500).json({ message: 'Error fetching quiz results with details' });
-//     }
-// };
-// backend/results.js
-
-
 // Define the endpoint for fetching quiz results
 exports.getAllResults = async (req, res) => {
   try {
@@ -128,6 +59,60 @@ exports.getAllResults = async (req, res) => {
   } catch (error) {
     console.error('Error fetching quiz results:', error);
     res.status(500).json({ message: 'Error fetching quiz results.' });
+  }
+};
+
+
+
+// exports.getUserQuizResults = async (req, res) => {
+//     const { userId } = req.params;
+
+//     try {
+//         // Chercher les résultats de quiz pour l'utilisateur donné
+//         const results = await Result.find({ userId })
+//             .populate({
+//                 path: 'quizId',
+//                 select: 'title trainingContent',  // Inclure trainingContent dans la réponse
+//                 populate: {
+//                     path: 'trainingContent',  // Peuple les informations du training content
+//                     select: 'title'  // Inclure le titre du training content
+//                 }
+//             });
+
+//         if (results.length > 0) {
+//             res.status(200).json(results);
+//         } else {
+//             res.status(404).json({ message: 'Aucun résultat trouvé pour cet utilisateur.' });
+//         }
+//     } catch (error) {
+//         console.error('Error fetching user quiz results:', error);
+//         res.status(500).json({ message: 'Erreur lors de la récupération des résultats de quiz.' });
+//     }
+// };
+// Controller to get quiz results for a user
+exports.getResultsForUser = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const results = await Result.find({ userId })
+      .populate({
+        path: 'quizId',
+        select: 'title trainingContent',  // Include trainingContent
+        populate: {
+          path: 'trainingContent',  // Populate the trainingContent model
+          select: 'title'  // Fetch the title of the training content
+        }
+      })
+      .sort({ createdAt: 1 });  // Sort by date
+
+    if (results.length === 0) {
+      return res.status(404).json({ message: 'No results found for this user.' });
+    }
+
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching results for user:', error);
+    res.status(500).json({ message: 'Error fetching results for user' });
   }
 };
 
