@@ -40,13 +40,21 @@ const QuizResultsTable = () => {
                         return map;
                     }, {});
 
+                    // const resultsWithUserDetails = resultsResponse.data.map(result => ({
+                    //     ...result,
+                    //     user: usersMap[result.userId],
+                    //     quizTitle: result.quizId.title,
+                    //     trainingContentTitle: result.quizId.trainingContent?.title || 'N/A',
+                    //     score: Math.round(result.score)
+                    // }));
                     const resultsWithUserDetails = resultsResponse.data.map(result => ({
                         ...result,
                         user: usersMap[result.userId],
-                        quizTitle: result.quizId.title,
-                        trainingContentTitle: result.quizId.trainingContent?.title || 'N/A',
+                        quizTitle: result.quizId?.title || 'Unknown Quiz Title', // Ensure quizId is not null/undefined
+                        trainingContentTitle: result.quizId?.trainingContent?.title || 'N/A',
                         score: Math.round(result.score)
                     }));
+                    
 
                     setQuizResults(resultsWithUserDetails);
                 } catch (error) {

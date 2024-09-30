@@ -234,7 +234,7 @@ const SideBar = () => {
               <span className="nav-text">Evaluation</span>
             </Link>
             <ul >
-					<li><Link className={`${path === "training-table" ? "mm-active" : ""}`} to="/quizzes-table">Quizzes</Link></li>
+					<li><Link className={`${path === "quizzes-table" ? "mm-active" : ""}`} to="/quizzes-table">Quizzes</Link></li>
           <li><Link className={`${path === "quiz-Results" ? "mm-active" : ""}`} to="/quiz-Results">Quiz Results</Link></li>
           <li><Link className={`${path === "user-Results" ? "mm-active" : ""}`} to="/user-Results">User Progress Graph</Link></li>
           </ul>

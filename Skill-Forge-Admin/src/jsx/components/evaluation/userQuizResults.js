@@ -43,19 +43,33 @@ const UserProgressGraph = () => {
   }, [selectedUser, token]);
 
   // Prepare data for the chart (using training titles as labels)
+  // const chartData = {
+  //   labels: results.map(result => {
+  //     // Safely check if trainingContent and its title exist
+  //     return result.quizId.trainingContent ? result.quizId.trainingContent.title : 'Unknown Title';
+  //   }),
+  //   datasets: [{
+  //     label: 'Score',
+  //     data: results.map(result => result.score),
+  //     fill: false,
+  //     borderColor: 'rgb(75, 192, 192)',
+  //     tension: 0.1
+  //   }]
+  // };
   const chartData = {
     labels: results.map(result => {
-      // Safely check if trainingContent and its title exist
-      return result.quizId.trainingContent ? result.quizId.trainingContent.title : 'Unknown Title';
+        // Check if quizId and trainingContent exist
+        return result.quizId?.trainingContent?.title || 'Unknown Title';
     }),
     datasets: [{
       label: 'Score',
-      data: results.map(result => result.score),
+      data: results.map(result => Math.round(result.score)),
       fill: false,
       borderColor: 'rgb(75, 192, 192)',
       tension: 0.1
     }]
-  };
+};
+
 
   const options = {
     scales: {
