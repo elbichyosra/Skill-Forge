@@ -47,13 +47,26 @@ const QuizResultsTable = () => {
                     //     trainingContentTitle: result.quizId.trainingContent?.title || 'N/A',
                     //     score: Math.round(result.score)
                     // }));
-                    const resultsWithUserDetails = resultsResponse.data.map(result => ({
-                        ...result,
-                        user: usersMap[result.userId],
-                        quizTitle: result.quizId?.title || 'Unknown Quiz Title', // Ensure quizId is not null/undefined
-                        trainingContentTitle: result.quizId?.trainingContent?.title || 'N/A',
-                        score: Math.round(result.score)
-                    }));
+                    // const resultsWithUserDetails = resultsResponse.data.map(result => ({
+                    //     ...result,
+                    //     user: usersMap[result.userId],
+                    //     quizTitle: result.quizId?.title || 'Unknown Quiz Title', // Ensure quizId is not null/undefined
+                    //     trainingContentTitle: result.quizId?.trainingContent?.title || 'N/A',
+                    //     score: Math.round(result.score)
+                    // }));
+                    const resultsWithUserDetails = resultsResponse.data.map(result => {
+                        const passingScore = result.quizId.passingScore || 70; // Utilisez le score de passage du quiz
+                        const status = result.score >= passingScore ? 'Success' : 'Failure'; // Déterminez le statut
+                    
+                        return {
+                            ...result,
+                            user: usersMap[result.userId],
+                            quizTitle: result.quizId?.title || 'Unknown Quiz Title',
+                            trainingContentTitle: result.quizId?.trainingContent?.title || 'N/A',
+                            score: Math.round(result.score),
+                            status // Ajoutez le statut ici
+                        };
+                    });
                     
 
                     setQuizResults(resultsWithUserDetails);
@@ -96,25 +109,45 @@ const QuizResultsTable = () => {
     };
 
     // Function to export data to Excel
+    // const exportToExcel = () => {
+    //     // Prepare the data for Excel
+    //     const data = quizResults.map(item => ({
+    //         "User Name": `${item.user.firstName} ${item.user.lastName}`,
+    //         "Email": item.user.email,
+    //         "Training Content": item.trainingContentTitle,
+    //         "Quiz Title": item.quizTitle,
+    //         "Score": `${item.score}%`
+    //     }));
+
+    //     // Create a new worksheet and workbook
+    //     const worksheet = XLSX.utils.json_to_sheet(data);
+    //     const workbook = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Results");
+
+    //     // Generate Excel file and trigger download
+    //     XLSX.writeFile(workbook, 'QuizResults.xlsx');
+    // };
     const exportToExcel = () => {
-        // Prepare the data for Excel
+        // Préparez les données pour Excel
         const data = quizResults.map(item => ({
             "User Name": `${item.user.firstName} ${item.user.lastName}`,
             "Email": item.user.email,
             "Training Content": item.trainingContentTitle,
             "Quiz Title": item.quizTitle,
-            "Score": `${item.score}%`
+            "Score": `${item.score}%`,
+            "Status": item.status // Ajoutez le statut ici
         }));
-
-        // Create a new worksheet and workbook
+    
+        // Créez une nouvelle feuille de calcul et un classeur
         const worksheet = XLSX.utils.json_to_sheet(data);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, "Quiz Results");
-
-        // Generate Excel file and trigger download
+    
+        // Générer le fichier Excel et déclencher le téléchargement
         XLSX.writeFile(workbook, 'QuizResults.xlsx');
     };
-
+    
+    
     return (
         <>
             {alertMessage && (
@@ -152,26 +185,29 @@ const QuizResultsTable = () => {
                 <div className="col-xl-12">
                     <div className="table-responsive">
                         <table className="table display mb-4 dataTablesCard job-table table-responsive-xl card-table">
-                            <thead>
-                                <tr>
-                                    <th>User Name</th>
-                                    <th>Email</th>
-                                    <th>Training Content</th>
-                                    <th>Quiz Title</th>
-                                    <th>Score</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentItems.map((item) => (
-                                    <tr key={item._id}>
-                                        <td>{item.user.firstName} {item.user.lastName}</td>
-                                        <td>{item.user.email}</td>
-                                        <td>{item.trainingContentTitle}</td>
-                                        <td>{item.quizTitle}</td>
-                                        <td>{item.score}%</td>
-                                    </tr>
-                                ))}
-                            </tbody>
+                        <thead>
+    <tr>
+        <th>User Name</th>
+        <th>Email</th>
+        <th>Training Content</th>
+        <th>Quiz Title</th>
+        <th>Score</th>
+        <th>Status</th> {/* Ajoutez cette ligne */}
+    </tr>
+</thead>
+<tbody>
+    {currentItems.map((item) => (
+        <tr key={item._id}>
+            <td>{item.user.firstName} {item.user.lastName}</td>
+            <td>{item.user.email}</td>
+            <td>{item.trainingContentTitle}</td>
+            <td>{item.quizTitle}</td>
+            <td>{item.score}%</td>
+            <td>{item.status}</td> {/* Ajoutez cette ligne */}
+        </tr>
+    ))}
+</tbody>
+
                         </table>
                     </div>
                 </div>
